@@ -1,0 +1,301 @@
+{% extends "sealquery/base.html" %}
+
+{% load static %}
+
+{% block content %}
+
+	<div class="search-catalogue-banner"></div>
+ 	<div class="sidepanel-left"></div>
+	<div class="sidepanel-right"></div>
+
+
+	<div class="sidebarleft_edit">
+		<div class="Revisions">
+			<h2>Filter</h2>
+			<form id="form" method="post">
+		    	{% csrf_token %}
+				{{ form.non_field_errors }}
+
+				<div class="fieldWrapper">		
+					{{ form.sealdescriptiontitle.errors }}
+					<label for="{{ form.sealdescriptiontitle.id_for_label }}">sealdescriptiontitle</label>
+					{{ form.sealdescriptiontitle }}
+				</div>
+				<div class="fieldWrapper" >		
+					{{ form.sealactor.errors }}
+					<label for="{{ form.sealactor.id_for_label }}">sealactor</label>
+					{{ form.sealactor }}
+				</div>
+				<div class="fieldWrapper">		
+					{{ form.newactor.errors }}
+					<label for="{{ form.newactor.id_for_label }}">newactor</label>
+					{{ form.newactor }}
+				</div>
+				<div class="fieldWrapper">		
+					{{ form.newactortitle.errors }}
+					<label for="{{ form.newactortitle.id_for_label }}">newactortitle</label>
+					{{ form.newactortitle }}
+				</div>
+				<div class="fieldWrapper">		
+					{{ form.newactorname.errors }}
+					<label for="{{ form.newactorname.id_for_label }}">newactorname</label>
+					{{ form.newactorname }}
+				</div>
+				<div class="fieldWrapper">		
+					{{ form.newactorpref1.errors }}
+					<label for="{{ form.newactorpref1.id_for_label }}">newactorpref1</label>
+					{{ form.newactorpref1 }}
+				</div>
+				<div class="fieldWrapper">		
+					{{ form.newactordescr1.errors }}
+					<label for="{{ form.newactordescr1.id_for_label }}">newactordescr1</label>
+					{{ form.newactordescr1 }}
+				</div>
+				<div class="fieldWrapper">		
+					{{ form.newactorpref2.errors }}
+					<label for="{{ form.newactorpref2.id_for_label }}">newactorpref2</label>
+					{{ form.newactorpref2 }}
+				</div>			
+				<div class="fieldWrapper">		
+					{{ form.newactordescr2.errors }}
+					<label for="{{ form.newactordescr2.id_for_label }}">newactordescr2</label>
+					{{ form.newactordescr2 }}
+				</div>
+				<div class="fieldWrapper">		
+					{{ form.newactorpref3.errors }}
+					<label for="{{ form.newactorpref3.id_for_label }}">newactorpref3</label>
+					{{ form.newactorpref3 }}
+				</div>					
+				<div class="fieldWrapper">		
+					{{ form.newactordescr3.errors }}
+					<label for="{{ form.newactordescr3.id_for_label }}">newactordescr3</label>
+					{{ form.newactordescr3 }}
+				</div>
+				<div class="fieldWrapper">		
+					{{ form.addrelationship.errors }}
+					<label for="{{ form.addrelationship.id_for_label }}">addrelationship</label>
+					{{ form.addrelationship }}
+				</div>
+				<div class="fieldWrapper">		
+					{{ form.eventtarget.errors }}
+					<label for="{{ form.eventtarget.id_for_label }}">eventtarget</label>
+					{{ form.eventtarget }}
+				</div>
+				<div class="fieldWrapper">		
+					{{ form.roleactor1.errors }}
+					<label for="{{ form.roleactor1.id_for_label }}">roleactor1</label>
+					{{ form.roleactor1 }}
+				</div>
+				<div class="fieldWrapper">		
+					{{ form.roleactor2.errors }}
+					<label for="{{ form.roleactor2.id_for_label }}">roleactor2</label>
+					{{ form.roleactor2 }}
+				</div>
+				<div class="fieldWrapper">
+			    	<input class="submit" type="submit" value="Submit">
+		    </div>
+		 	</form>
+		</div>
+	</div>
+
+	<div class="sidebarright_edit">
+	{% for event in eventset %}
+	<table>
+			<tr>
+				<tr>
+					<th colspan="2"><h4>Event details</h4></td>
+				</tr>
+			</tr>
+
+			<tr>
+				<th class="indent">pk_event</th>
+				<td>{{event.0}}</td>
+			</tr>
+			<tr>
+				<th class="indent">startdate</th>
+				<td>{{event.1}}</td>
+			</tr>
+			<tr>
+				<th class="indent">enddate</th>
+				<td>{{event.2}}</td>
+			</tr>
+			<tr>
+				<th class="indent">pk_part</th>
+				<td>{{event.3}}</td>
+			</tr>
+			<tr>
+				<th class="indent">id_item</th>
+				<td>{{event.4}}</td>
+			</tr>
+			<tr>
+				<th class="indent">Referencefull</th>
+				<td>{{event.5}}</td>
+			</tr>
+	</table>
+	{% endfor %}
+	</div>
+
+
+	<div class="main-title">
+		<h1>{{pagetitle}}</h1>
+	</div>
+
+	<div class="mainpage" id="mainpage"></div>
+
+	<div class="entity-permalink" id="entity-permalink">
+		<div class="permalinkinfo" id="permalinkinfo">
+		Permalink
+		<button onclick="toggle('entity-permalink')" class="closebutton">X</button>
+		<form action="#">
+			<label>Copy this URL to link to this page:</label>
+			<input id="input" class="text" name="" value="http://www.digisig.org/entity/{{sealdescription_object.id_sealdescription}}" type="text" readonly>
+		</form>
+		</div>
+	</div>
+
+
+	<div class="entity_detail" id= "entity_detail"> 
+		<table>
+			<tr>
+				<th colspan="2">Seal description details ({{sealdescription_object.id_sealdescription}})</th>
+				<td></td>
+			{% if sealdescription_object.representation_filename != null %}
+					<td rowspan="7"><img class="sealdescription-img_edit" id="modalimagebase" src="{{sealdescription_object.connection_sealdescriptions}}{{sealdescription_object.representation_filename}}" alt="{{sealdescription_object.collection_shorttitle}}, {{sealdescription_object.sealdescription_identifier}}">
+					</td>
+					<!-- The Modal -->
+					<div id="myModal" class="modal">
+					  <span class="close">&times;</span>
+					  <img class="modal-content" id="img01">
+					  <div id="caption"></div>
+					</div>
+			{% endif %}
+			</tr>
+			<tr>
+				<th>Title</th>
+				<td>{{sealdescription_object.sealdescription_title}}</td>
+			</tr>
+			<tr>
+				<th>Identifier <a class="help" href="{% url 'entity' digisig_entity_number=10001597 %}" target="_blank"><i class="fas fa-question-circle"></i></a></th>
+				<td>{{sealdescription_object.sealdescription_identifier}}</td>
+			</tr>
+			<tr>
+				<th>Reference work</th> 
+				<td>{{sealdescription_object.collection_title}}</td>
+			</tr>
+			<tr>
+				<th>Author</th>
+				<td>{{sealdescription_object.collection_author}}</td>
+			</tr>
+			<tr>
+				<th>Description of</th>
+				<td><a href="{% url 'entity' sealdescription_object.fk_seal %}">Seal details</a></td>
+			</tr>
+			<tr>
+				<th>Next</th>
+				<td><a href="{% url 'edit_actor' nextdescription.id_sealdescription %}">Next description</a></td>
+			</tr>
+
+		</table>
+	</div>
+
+	<div class="entity_main" id="entity_main">
+		<div class="div-caption">
+			Seal contents <button id="entitybutton1" onclick="tbtoggle('entity1', 'entitybutton1')" class="entity">+</button>
+		</div>
+
+		<div>
+		<table id="entity1" style="display:initial;">
+				<tr>
+					<th>Seal Actor</th>
+					<td>{{seal_object.fk_individual_realizer}}</td>
+				</tr>
+		</table>
+		</div>
+	</div>
+
+<div class="entity_seals" id="entity_seals">
+	<div class="div-caption">
+		Actor information <button id="entitybutton1" onclick="tbtoggle('entity2', 'entitybutton2')" class="entity">+</button>
+	</div>
+	<div>
+		<table>
+			<tr>
+				<th>Actor</th>
+				<td>{{actor_object.id_individual}}</td>
+			</tr>
+			<tr>
+				<th>Fullname</th>
+				<td>{{actor_object.fullname_original}}</td>
+			<tr>
+			<tr>
+				<th>Group</th>
+				<td>{{actor_object.fk_group}}</td>
+			<tr>
+			<tr>
+				<th>Class</th>
+				<td>{{actor_object.groupclass}}</td>
+			<tr>
+			<tr>
+				<th>Order</th>
+				<td>{{actor_object.grouporder}}</td>
+			</tr>
+		</table>
+	</div>
+</div>
+
+<div class="entity_relationship" id="entity_relationship">
+		<div class="div-caption">
+			Relationships {{relationshipnumber}}<button id="entitybutton2" onclick="tbtoggle('entity2', 'entitybutton2')" class="entity">+</button>
+		</div>
+
+		<div>
+			<table id="entity2" style="display:none;">
+			{% for relationship in relationship_object %}
+				{% if forloop.counter|divisibleby:2 %}<tr class="even">{% else %}<tr class="odd">{% endif %}
+					<td>{{relationship.relationship_role}} of 
+						<a href="{% url 'actor_page' digisig_entity_number=relationship.person2 %}" target="_blank">
+							{% if relationship.group_name != null %}{{relationship.group_name}}{% endif %}
+							{% if relationship.groupclass != null %} ({{relationship.groupclass}}){% endif %}
+							{% if relationship.grouporder != null %}: {{relationship.grouporder}}{% endif %}
+							{% if relationship.descriptor_title != null %}{{relationship.descriptor_title}}{% endif %}
+							{% if relationship.descriptor_name != null %}{{relationship.descriptor_name}}{% endif %}
+							{% if relationship.prefix1 != null %}{{relationship.prefix1}}{% endif %}
+							{% if relationship.descriptor1 != null %}{{relationship.descriptor1}}{% endif %}
+							{% if relationship.prefix2 != null %}{{relationship.prefix2}}{% endif %}
+							{% if relationship.descriptor2 != null %}{{relationship.descriptor2}}{% endif %}
+							{% if relationship.prefix3 != null %}{{relationship.prefix3}}{% endif %}
+							{% if relationship.descriptor3 != null %}{{relationship.descriptor3}}{% endif %}
+						</a>
+					</td>
+				</tr>
+			{% endfor %}
+			</table>
+		</div>
+</div>
+
+
+<script>
+// Get the modal
+var modal = document.getElementById("myModal");
+
+// Get the image and insert it inside the modal - use its "alt" text as a caption
+var img = document.getElementById("modalimagebase");
+var modalImg = document.getElementById("img01");
+var captionText = document.getElementById("caption");
+img.onclick = function(){
+  modal.style.display = "block";
+  modalImg.src = this.src;
+  captionText.innerHTML = this.alt;
+}
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+  modal.style.display = "none";
+} 
+
+</script>
+
+{% endblock %}
