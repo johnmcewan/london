@@ -1,0 +1,6 @@
+User-Agent: *
+
+Disallow: /data/
+
+Crawl-delay: 10
+
