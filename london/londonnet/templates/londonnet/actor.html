@@ -15,17 +15,17 @@
 	<div class="entity_detail" id="entity_detail">
 		<h3>Actor details <button onclick="toggle('entity-permalink')" class="permalink">Permalink</button></h3> 
 		<table>
-			{% if individual_object.groupclass != null %}
+			{% if actor_object.groupclass != null %}
 			<tr>
 				<th>Class</th>
-				<td>{{individual_object.groupclass}}</td>
+				<td>{{actor_object.groupclass}}</td>
 			<tr>
 			{% endif %}
 	
-			{% if individual_object.grouporder != null %}
+			{% if actor_object.grouporder != null %}
 			<tr>
 				<th>Order</th>
-				<td>{{individual_object.grouporder}}</td>
+				<td>{{actor_object.grouporder}}</td>
 			</tr>
 			{% endif %}				 
 		</table>
@@ -37,7 +37,7 @@
 		<button onclick="toggle('entity-permalink')" class="closebutton">X</button>
 		<form action="#">
 			<label>Copy this URL to link to this page:</label>
-			<input id="input" class="text" name="" value="http://www.digisig.org/entity/{{individual_object.id_individual}}" type="text" readonly>
+			<input id="input" class="text" name="" value="http://www.digisig.org/entity/{{actor_object.id_individual}}" type="text" readonly>
 		</form>
 		</div>
 	</div>
@@ -68,7 +68,7 @@
 					</td>
 				</tr>
 
-				{% if seal.6 != individual_object.id_individual %}
+				{% if seal.6 != actor_object.id_individual %}
 				<tr>
 					<th class="indent">Actor</th>
 					<td>
@@ -134,11 +134,11 @@
 	{% endif %}
 
 	<div class="entity_rdf">
-		<div hidden id="rdfajax">{% url 'ajax' digisig_entity_number=individual_object.id_individual %}</div>
+		<div hidden id="rdfajax">{% url 'ajax' digisig_entity_number=actor_object.id_individual %}</div>
 		<div class="div-caption">
 			RDF 
 			<button id="entitybutton3" onclick="tbtoggle2('entity3', 'entitybutton3')" class="entity">+</button>
-			<button class="RDF-download"><a href="{% url 'data' digisig_entity_number=individual_object.id_individual %}">Download</button> 
+			<button class="RDF-download"><a href="{% url 'data' digisig_entity_number=actor_object.id_individual %}">Download</button> 
 		</div>
 
 		<div>

@@ -63,38 +63,20 @@ def home(request):
 	template = loader.get_template('londonnet/home.html')
 
 	# individual_set = Individual.objects.filter(
-	# 	Referenceindividual__Event__Location_reference__Locationname__Location__fk_region=87).count()	
+	# 	fk_individual_event__Event__Location_reference__Locationname__Location__fk_region=87).count()	
 
-	# individual_set = Individual.objects.filter(Referenceindividual__fk_individual__gt=1).count()
+	actor_total = Individual.objects.filter(
+		fk_individual_event__fk_event__locationreference__fk_locationname__fk_location__fk_region=87).distinct('id_individual').count()	
 
-	reference_set = Referenceindividual.objects.filter(fk_individual=10000019).count()
+	reference_total = Referenceindividual.objects.filter(fk_event__locationreference__fk_locationname__fk_location__fk_region=87).exclude(fk_individual=10000019).count()
 
-	# print (individual_set)
-
-	print (reference_set)
-
-	manifestation_total = DigisigManifestationview.objects.count()
-	seal_total = DigisigManifestationview.objects.distinct('fk_seal').count()
-	item_total = DigisigManifestationview.objects.distinct('fk_item').count()
-	catalogue_total = Digisigsealdescriptionview.objects.count()
-
-
-		# ## data for spatial distribution
-		# regiondisplayset = Regiondisplay.objects.filter(
-		# 	region__location__locationname__locationreference__fk_locationstatus=1,
-		# 	region__location__locationname__locationreference__fk_event__part__fk_part__fk_support__fk_face__in=face_objectset
-		# 	).annotate(numregions=Count('region__location__locationname__locationreference'))
-
-
-
-
+	event_total = Referenceindividual.objects.filter(fk_event__locationreference__fk_locationname__fk_location__fk_region=87).exclude(fk_individual=10000019).distinct('fk_event').count()
 
 	context = {
 		'pagetitle': pagetitle,
-		'manifestation_total': manifestation_total,
-		'seal_total': seal_total,
-		'item_total': item_total,
-		'catalogue_total': catalogue_total, 
+		'actor_total': actor_total,
+		'reference_total': reference_total,
+		'event_total': event_total,
 		}
 
 	return HttpResponse(template.render(context, request))
@@ -162,7 +144,10 @@ def search(request, searchtype):
 
 		pagetitle = 'title'
 
-		individual_object = Digisigindividualview.objects.all().order_by('group_name', 'descriptor_name')
+		actor_object = Individual.objects.filter(
+		fk_individual_event__fk_event__locationreference__fk_locationname__fk_location__fk_region=87).order_by(
+		'fk_descriptor_name__descriptor_modern', 'fk_descriptor_descriptor1__descriptor_modern', 'fk_descriptor_descriptor2__descriptor_modern','fk_descriptor_descriptor3__descriptor_modern','id_individual').distinct(
+		'fk_descriptor_name__descriptor_modern', 'fk_descriptor_descriptor1__descriptor_modern', 'fk_descriptor_descriptor2__descriptor_modern','fk_descriptor_descriptor3__descriptor_modern','id_individual')
 
 		if request.method == "POST":
 			form = PeopleForm(request.POST)
@@ -175,23 +160,23 @@ def search(request, searchtype):
 
 				if qgroup.isdigit():
 					qgroup = int(qgroup)
-					if int(qgroup) == 2: individual_object = individual_object.filter(corporateentity=True)
-					if int(qgroup) == 1: individual_object = individual_object.filter(corporateentity=False)
+					if int(qgroup) == 2: individual_object = actor_object.filter(corporateentity=True)
+					if int(qgroup) == 1: individual_object = actor_object.filter(corporateentity=False)
 
 				if len(qname) > 0:
-				 	individual_object = individual_object.filter(
+				 	actor_object = actor_object.filter(
 				 		Q(group_name__icontains=qname) | Q(descriptor_name__icontains=qname) | Q(descriptor1__icontains=qname) | Q(descriptor2__icontains=qname) | Q(descriptor3__icontains=qname)
 				 		)
 
 				if qclass.isdigit():
 					if int(qclass) > 0:
 						qclass = int(qclass)
-						individual_object = individual_object.filter(fk_group_class=qclass)
+						actor_object = actor_object.filter(fk_group_class=qclass)
 
 				if qorder.isdigit():
 					if int(qorder) > 0:
 						qorder = int(qorder)
-						individual_object = individual_object.filter(fk_group_order=qorder)
+						actor_object = actor_object.filter(fk_group_order=qorder)
 
 				form = PeopleForm(request.POST)
 
@@ -203,7 +188,7 @@ def search(request, searchtype):
 	# preparing the data for individual_object
 		qpaginationend = int(qpagination) * 10
 		qpaginationstart = int(qpaginationend) -9 
-		totalrows = len(individual_object)
+		totalrows = len(actor_object)
 
 		# if the dataset is less than the page limit
 		if qpaginationend > totalrows:
@@ -213,7 +198,7 @@ def search(request, searchtype):
 			if qpaginationend < 10:
 				print(totalrows)
 			else:
-				individual_object = individual_object[qpaginationstart:qpaginationend]
+				actor_object = actor_object[qpaginationstart:qpaginationend]
 		totaldisplay = str(qpaginationstart) + " - " + str(qpaginationend)
 
 		pagecountercurrent = qpagination
@@ -222,7 +207,7 @@ def search(request, searchtype):
 
 	# this code prepares the list of links to associated seals for each individual
 		sealindividual = []
-		for e in individual_object:
+		for e in actor_object:
 			testvalue = e.id_individual
 			testseal = Seal.objects.filter(
 				fk_individual_realizer=testvalue)
@@ -233,7 +218,7 @@ def search(request, searchtype):
 
 		context = {
 			'pagetitle': pagetitle,
-			'individual_object': individual_object,
+			'actor_object': actor_object,
 			'sealindividual': sealindividual,
 			'totalrows': totalrows,
 			'totaldisplay': totaldisplay,

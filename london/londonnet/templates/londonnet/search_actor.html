@@ -76,20 +76,20 @@
 	
 
 		<div class="searchresults">
-		{% for individual in individual_object %}
+		{% for individual in actor_object %}
 			<div>
 					{% if individual.id_individual != 10000019 %}<a href="{% url 'entity' digisig_entity_number=individual.id_individual %}">{% endif %}
 						{% if individual.group_name != null %}{{individual.group_name}}{% endif %}
 						{% if individual.groupclass != null %} ({{individual.groupclass}}){% endif %}
 						{% if individual.grouporder != null %}: {{individual.grouporder}}{% endif %}
-						{% if individual.descriptor_title != null %}{{individual.descriptor_title}}{% endif %}
-						{% if individual.descriptor_name != null %}{{individual.descriptor_name}}{% endif %}
-						{% if individual.prefix1 != null %}{{individual.prefix1}}{% endif %}
-						{% if individual.descriptor1 != null %}{{individual.descriptor1}}{% endif %}
-						{% if individual.prefix2 != null %}{{individual.prefix2}}{% endif %}
-						{% if individual.descriptor2 != null %}{{individual.descriptor2}}{% endif %}
-						{% if individual.prefix3 != null %}{{individual.prefix3}}{% endif %}
-						{% if individual.descriptor3 != null %}{{individual.descriptor3}}{% endif %}
+						{% if individual.fk_descriptor_title != null %}{{individual.fk_descriptor_title}}{% endif %}
+						{% if individual.fk_descriptor_name != null %}{{individual.fk_descriptor_name}}{% endif %}
+						{% if individual.fk_descriptor_prefix1 != null %}{{individual.fk_descriptor_prefix1}}{% endif %}
+						{% if individual.fk_descriptor_descriptor1 != null %}{{individual.fk_descriptor_descriptor1}}{% endif %}
+						{% if individual.fk_descriptor_prefix2 != null %}{{individual.fk_descriptor_prefix2}}{% endif %}
+						{% if individual.fk_descriptor_descriptor2 != null %}{{individual.fk_descriptor_descriptor2}}{% endif %}
+						{% if individual.fk_descriptor_prefix3 != null %}{{individual.fk_descriptor_prefix3}}{% endif %}
+						{% if individual.fk_descriptor_descriptor3 != null %}{{individual.fk_descriptor_descriptor3}}{% endif %}
 					{% if person_object.id_individual != 10000019 %}</a>{% endif %}
 		</div>
 		<div></div>
