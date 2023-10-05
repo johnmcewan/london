@@ -36,7 +36,7 @@ SECRET_KEY = 'Itsasecret'
 DEBUG = True
 #DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['london.herokuapp.com', '127.0.0.1', 'www.london.org', 'london.org']
 
 
 # Application definition

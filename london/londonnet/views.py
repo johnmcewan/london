@@ -84,7 +84,7 @@ def about(request):
 	context = {
 		'pagetitle': pagetitle,
 	}
-	template = loader.get_template('sealquery/about.html')					
+	template = loader.get_template('londonnet/about.html')					
 	return HttpResponse(template.render(context, request))
 
 ### success
@@ -94,7 +94,7 @@ def success(request):
 		'pagetitle': pagetitle,
 	}
 
-	template = loader.get_template('sealquery/success.html')
+	template = loader.get_template('londonnet/success.html')
 	return HttpResponse(template.render(context, request))
 
 
@@ -221,7 +221,7 @@ def search(request, searchtype):
 			'pagecounternextnext': pagecounternextnext,
 			}
 
-		template = loader.get_template('sealquery/search_actor.html')
+		template = loader.get_template('londonnet/search_actor.html')
 		return HttpResponse(template.render(context, request))
 
 
@@ -295,7 +295,7 @@ def actor_page(request, digisig_entity_number):
 	relationship_object = Digisigrelationshipview.objects.filter(fk_individual = digisig_entity_number)
 	relationshipnumber = len(relationship_object)
 
-	template = loader.get_template('sealquery/actor.html')
+	template = loader.get_template('londonnet/actor.html')
 	context = {
 		'pagetitle': pagetitle,
 		'individual_object': individual_object,
@@ -334,7 +334,7 @@ def edit_actor(request, digisig_entity_number):
 	context = {
 		'pagetitle': pagetitle,
 	}
-	template = loader.get_template('sealquery/index.html')
+	template = loader.get_template('londonnet/index.html')
 
 
 	if request.user.is_authenticated:
@@ -454,7 +454,7 @@ def edit_actor(request, digisig_entity_number):
 			### calling here to include updates from form
 			sealdescription_object1 = get_object_or_404(Digisigsealdescriptionview, id_sealdescription=digisig_entity_number)
 
-			template = loader.get_template('sealquery/edit_actor.html')
+			template = loader.get_template('londonnet/edit_actor.html')
 			context = {
 			'pagetitle': pagetitle,
 			'authenticationstatus': authenticationstatus,
