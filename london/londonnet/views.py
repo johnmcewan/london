@@ -62,10 +62,32 @@ def home(request):
 
 	template = loader.get_template('londonnet/home.html')
 
+	# individual_set = Individual.objects.filter(
+	# 	Referenceindividual__Event__Location_reference__Locationname__Location__fk_region=87).count()	
+
+	# individual_set = Individual.objects.filter(Referenceindividual__fk_individual__gt=1).count()
+
+	reference_set = Referenceindividual.objects.filter(fk_individual=10000019).count()
+
+	# print (individual_set)
+
+	print (reference_set)
+
 	manifestation_total = DigisigManifestationview.objects.count()
 	seal_total = DigisigManifestationview.objects.distinct('fk_seal').count()
 	item_total = DigisigManifestationview.objects.distinct('fk_item').count()
 	catalogue_total = Digisigsealdescriptionview.objects.count()
+
+
+		# ## data for spatial distribution
+		# regiondisplayset = Regiondisplay.objects.filter(
+		# 	region__location__locationname__locationreference__fk_locationstatus=1,
+		# 	region__location__locationname__locationreference__fk_event__part__fk_part__fk_support__fk_face__in=face_objectset
+		# 	).annotate(numregions=Count('region__location__locationname__locationreference'))
+
+
+
+
 
 	context = {
 		'pagetitle': pagetitle,

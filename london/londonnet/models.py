@@ -1426,7 +1426,7 @@ class Regiondisplay(models.Model):
 
 class RelationshipBranch(models.Model):
     fk_relationshipnode = models.ForeignKey('RelationshipNode', models.DO_NOTHING, db_column='fk_relationshipnode', blank=True, null=True)
-    fk_individual = models.ForeignKey(Individual, models.DO_NOTHING, related_name='fk_individual_relationshipbranch', db_column='fk_individual', blank=True, null=True)
+    fk_individual = models.ForeignKey('Individual', models.DO_NOTHING, related_name='fk_individual_relationshipbranch', db_column='fk_individual', blank=True, null=True)
     fk_relationshiprole = models.ForeignKey('RelationshipRole', models.DO_NOTHING, db_column='fk_relationshiprole', blank=True, null=True)
     pk_branch = models.AutoField(primary_key=True)
 
