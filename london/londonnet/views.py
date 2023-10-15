@@ -12,21 +12,21 @@ from django.conf import settings
 # from pyproj import Proj, transform
 from django.core import serializers
 from decimal import Decimal
-# from rdflib import Graph, Literal, RDF, URIRef, Namespace
-# from rdflib.namespace import FOAF, XSD
+from rdflib import Graph, Literal, RDF, URIRef, Namespace
+from rdflib.namespace import FOAF, XSD
 import math
 
 from django.core.files import File 
 # import urllib.request
 import os
-# from PIL import Image
+from PIL import Image
 
 from .forms import * 
 from .models import *
 
-# import json
-# import statistics
-# import math
+import json
+import statistics
+import math
 
 # import pickle
 # import numpy as np
@@ -114,9 +114,7 @@ def ajax(request, digisig_entity_number):
 			'rdftext': rdftext,
 			}
 		return JsonResponse(context)
-	return render(request, 'app/index.html')
-
-
+	return render(request, 'app/home.html')
 
 
 ######################### information ################################
@@ -305,7 +303,7 @@ def actor_page(request, digisig_entity_number):
 	template = loader.get_template('londonnet/actor.html')
 	context = {
 		'pagetitle': pagetitle,
-		'individual_object': individual_object,
+		'actor_object': individual_object,
 		'seal_object': seal_object,
 		'sealnumber': sealnumber,
 		'relationship_object': relationship_object,

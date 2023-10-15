@@ -2,10 +2,6 @@ from django.urls import path, re_path
 from . import views
 from django.views.generic.base import TemplateView
 
-# urlpatterns = [
-#     path("", views.index, name="index"),
-# ]
-
 urlpatterns = [
     path('', views.home, name='home'),
     path('robots.txt', TemplateView.as_view(template_name="londonnet/robots.txt", content_type="text/plain")),
@@ -18,7 +14,7 @@ urlpatterns = [
     path('discover/<str:discovertype>', views.discover, name='discover'),
     # re_path(r'discover/exhibit/(?P<digisig_entity_number>[0-9]{8})', views.rti_exhibit, name='rti_exhibit'),
 
-    # re_path(r'ajax/(?P<digisig_entity_number>[0-9]{8})', views.ajax, name='ajax'),
+    re_path(r'ajax/(?P<digisig_entity_number>[0-9]{8})', views.ajax, name='ajax'),
 
     re_path(r'edit/actor/(?P<digisig_entity_number>[0-9]{8})', views.edit_actor, name='edit_actor'),
     # re_path(r'edit/pas/(?P<digisig_entity_number>[0-9]{8})', views.edit_pas, name='edit_pas'),
@@ -66,3 +62,5 @@ urlpatterns = [
 
     path('entity/<str:entity_phrase>', views.entity_fail, name='entity_fail'),
     ]
+
+
