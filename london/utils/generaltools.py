@@ -192,7 +192,6 @@ def temporaldistribution(timegroupcases):
 				#number of cases for each time period
 				timegroupupdate = targettimegroup.timegroup_c_range
 				timecount[timegroupupdate] += 1
-
 	#
 	labels = []
 	data = []
