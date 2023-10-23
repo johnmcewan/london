@@ -133,6 +133,29 @@
 	</div>
 	{% endif %}
 
+	<div class="entity_sealdescription">
+		<div class="div-caption">
+			References 
+			<button id="entitybutton4" onclick="tbtoggle('entity4', 'entitybutton4')" class="entity">+</button>
+		</div>
+
+		<div>
+			<table id="entity4" style="display:none;">
+			
+				{% for r in reference_set.values %}
+
+			<tr>
+				<td>{{r.shelfmark}}</td>
+				<td>{{r.date1}} - {{r.date2}}</td>
+				<td>{{r.id_item}}</td>
+				<td>{{r.location}}</td>
+			</tr>
+				{% endfor %}
+
+			</table>
+		</div>
+	</div>
+
 
 	<div class="entity_rdf">
 		<div hidden id="rdfajax">{% url 'ajax' digisig_entity_number=actor_object.id_individual %}</div>

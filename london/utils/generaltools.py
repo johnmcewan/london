@@ -15,7 +15,12 @@ from rdflib import Graph, Literal, RDF, URIRef, Namespace
 from rdflib.namespace import FOAF, XSD
 
 
+
+
+
 ############# Table of Contents ############
+#referencecollector
+
 # comparedatesup
 # comparedatesdown
 # representationmetadata
@@ -27,69 +32,31 @@ from rdflib.namespace import FOAF, XSD
 # deletesealfull {very dangerous}
 # addseal
 
-# def comparedatesup(date1, date1precision, date2, date2precision):
-# 	# is date1 a better higher date?
-# 	#if (date1 > date2):
-# 	#if (date1precision <= date2precision):
-	
-# 	#Start by assuming that should accept 
-# 	returndate = date1
-# 	returnprecision = date1precision
-	
-# 	# if the precision in date1 is not as good then assume return date2
-# 	if (date1precision > date2precision):
-# 		returndate = date2
-# 		returnprecision = date2precision
+def referencecollector(reference_object):
 
-# 		#except if the precision of date1 is good and it improves the year sufficiently superior....
-# 		if (date1precision < 11):
-# 			# if date2 is greater than date1 by more than ten years then take date1....
-# 			if ((date2 - date1) > 10):
-# 				finaldate = date1
-# 				finalprecision = date1precision	
-# 				# print ("y3")
-# 			# if the difference in date2 and date 1 is precision is 5 less than but improvemes the date more than five years accept 
-# 			elif (date2 - date1 < 5):
-# 				if ((finaldate - outdate) < 5):
-# 					finaldate = outdate
-# 					finalprecision = precision
-# 					# print ("y4")
-# 			returndate = finaldate
-# 			returnprecision = finalprecision
+	reference_set = {}
 
-# 		# if the difference in precision is 10 years or more decline 
-# 		else:
-# 			# print ("y5") 
-# 			pass 
+	for ref in reference_object:
+		reference_dic = {}
+		event = ref.fk_event
+		itemset = Item.objects.filter(part__fk_event=event)
+		locationset = Location.objects.filter(locationname__locationreference__fk_event=event)
+		reference_dic["id_reference"] = ref.pk_referenceindividual
+		reference_dic["date1"] = event.startdate
+		reference_dic["date2"] = event.enddate
 
-# 	return (returndate, returnprecision)
+		for item in itemset:
+			reference_dic["shelfmark"] = item.shelfmark
+			reference_dic["id_item"] = item.id_item
 
-# def comparedatesdown(date1, date1precision, date2, date2precision):
-# 	# is date 1 a better lower date?
-# 	if (date1 < date2):
-# 		if (date1precision <= date2precision):
-# 			returndate = date1
-# 			returnprecision = date1precision
-# 			# print ("y2")	
-# 		# if the precision is not as good
-# 		if (date1precision > date2precision):
-# 			# if the difference in precision is less than five years accept
-# 			if ((precision - finalprecision) < 5):
-# 				finaldate = outdate
-# 				finalprecision = precision	
-# 				# print ("y3")
-# 			# if the difference in precision is 5 to 9 years but the improvement is more than five years accept 
-# 			elif ((precision - finalprecision) < 10):
-# 				if ((finaldate - outdate) < 5):
-# 					finaldate = outdate
-# 					finalprecision = precision
-# 					# print ("y4")	
-# 			# if the difference in precision is 10 years or more decline 
-# 			else:
-# 				# print ("y5") 
-# 				pass 
+		for location in locationset:
+			reference_dic["location"] = location.location
+			reference_dic["id_location"] = location.id_location
 
-# 	return (returndate, returnprecision)
+		reference_set[ref.pk_referenceindividual] = reference_dic
+
+	print (reference_set)
+	return (reference_set)
 
 def representationmetadata(representation_case):
 

@@ -10,7 +10,7 @@ from .models import *
 # location_options = []
 # nature_options = []
 # representation_options = [('', 'None')]
-# timegroup_options = [('', 'None')]
+timegroup_options = [('', 'None')]
 shape_options = [('', 'None')]
 classname_options = [('', 'None')]
 
@@ -30,8 +30,8 @@ classname_options = [('', 'None')]
 # for e in RepresentationType.objects.order_by('representation_type').distinct('representation_type').exclude(pk_representation_type=5):
 # 	representation_options.append((e.pk_representation_type, e.representation_type))
 	
-# for e in TimegroupC.objects.order_by('pk_timegroup_c'):
-# 	timegroup_options.append((e.timegroup_c, e.timegroup_c_range))
+for e in TimegroupC.objects.order_by('pk_timegroup_c'):
+	timegroup_options.append((e.timegroup_c, e.timegroup_c_range))
 
 for e in DigisigManifestationview.objects.order_by('shape').distinct('shape'):
 	shape_options.append((e.fk_shape, e.shape))
@@ -424,3 +424,15 @@ class Sealdescription_actorForm(forms.Form):
 # 	primacy = forms.BooleanField(label='primacy', required=False)
 # 	image_file_location = forms.CharField(label='image_file_location', max_length=200, required=False, widget=forms.TextInput())
 # 	collection = forms.ChoiceField(label='collection', choices=collection_options, required=False, initial={'': 'None'})
+
+
+#Form for analysing government office holders
+
+office_options = [('', 'None')]
+
+# for e in Position.objects.order_by('pk_position'):
+# 	position_options.append((e.pk_position, e.position))
+
+class Government_Form)forms.Form):
+	timegroupC = forms.ChoiceField(label='Period', choices=timegroup_options, required=False)
+	office_type = forms.ChoiceField(label='office_options', choices=office_options, required=False)

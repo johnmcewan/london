@@ -124,6 +124,246 @@ def information(request, infotype):
 	print (infotype)
 
 
+########################### Civic Government #########################
+	if infotype == "info_government":
+
+		pagetitle = 'Civic Government'
+
+		#default
+		digisig_entity_number= 30000287
+
+		#adjust values if form submitted
+		if request.method == 'POST':
+			form = Government_Form(request.POST)
+			
+			if form.is_valid():
+				collectionstr = form.cleaned_data['collection']
+				#make sure values are not empty then try and convert to ints
+				if len(collectionstr) > 0:
+					digisig_entity_number = int(collectionstr)
+
+		### This code prepares collection info box and the data for charts on the collection page
+
+		#defaults
+		qcollection = int(digisig_entity_number)
+		data = []
+		labels = []
+		pagetitle = 'All Collections'
+		collectioninfo= []
+		collection = get_object_or_404(Collection, id_collection=qcollection)
+		collectioncontributors = Collectioncontributor.objects.filter(fk_collection=qcollection)
+
+		contributorset = contributorgenerate(collectioncontributors)
+
+		#if collection is set then limit the scope of the dataset
+		if (qcollection == 30000287):
+			sealdescriptionset = Sealdescription.objects.filter(fk_seal__gt=1)
+			sealset = Seal.objects.all()
+			faceset = Face.objects.filter(fk_faceterm=1)
+
+			#total count to enable calculation of portion of entries with place info
+			# placecount = Manifestation.objects.filter(
+			# 	fk_support__fk_part__fk_event__locationreference__fk_locationstatus__isnull=False).values().distinct().count()
+
+			#total number cases that have NOT been assigned to a location (yet) --- 7042 = not assigned --- location status =2 is a secondary location
+			casecount = Locationname.objects.exclude(
+				pk_locationname=7042).exclude(
+				locationreference__fk_locationstatus=2).filter(
+				locationreference__fk_event__part__fk_part__fk_support__gt=1).count()
+
+			#total portion of entries with place info
+			placecount = Locationname.objects.exclude(
+				locationreference__fk_locationstatus=2).filter(
+				locationreference__fk_event__part__fk_part__fk_support__gt=1).count()
+
+			#data for map counties
+			# placeset = Region.objects.filter(fk_locationtype=4).annotate(numplaces=Count('location__locationname__locationreference', 
+			# 	filter=Q(location__locationname__locationreference__fk_locationstatus=1)))
+			placeset = Region.objects.filter(fk_locationtype=4, 
+				location__locationname__locationreference__fk_locationstatus=1
+				).annotate(numplaces=Count('location__locationname__locationreference__fk_event__part__fk_part__fk_support')) 
+
+			#data for map regions -- not active?
+			# regiondisplayset = Regiondisplay.objects.annotate(numregions=Count('region__location__locationname__locationreference', 
+			# 	filter=Q(region__location__locationname__locationreference__fk_locationstatus=1)))
+			regiondisplayset = Regiondisplay.objects.filter(region__location__locationname__locationreference__fk_locationstatus=1
+				).annotate(numregions=Count('region__location__locationname__locationreference__fk_event__part__fk_part__fk_support')) 
+
+		else:
+			sealdescriptionset = Sealdescription.objects.filter(fk_collection=qcollection)
+			sealset = Seal.objects.filter(sealdescription__fk_collection=qcollection)
+			faceset = Face.objects.filter(fk_seal__sealdescription__fk_collection=qcollection).filter(fk_faceterm=1)
+			pagetitle = collection.collection_title
+
+			#total count to enable calculation of portion of entries with place info
+			# placecount = Manifestation.objects.filter(
+			# 	fk_face__fk_seal__sealdescription__fk_collection=qcollection).filter(
+			# 	fk_support__fk_part__fk_event__locationreference__fk_locationstatus__isnull=False).values().distinct().count()
+
+			#total number cases that have NOT been assigned to a location (yet) --- 7042 = not assigned
+			casecount = Locationname.objects.exclude(
+				pk_locationname=7042).exclude(
+				locationreference__fk_locationstatus__isnull=True).filter(
+				locationreference__fk_event__part__fk_part__fk_support__fk_face__fk_seal__sealdescription__fk_collection=qcollection).count()
+
+			#total portion of entries with place info
+			placecount = Locationname.objects.exclude(
+				locationreference__fk_locationstatus__isnull=True).filter(
+				locationreference__fk_event__part__fk_part__fk_support__fk_face__fk_seal__sealdescription__fk_collection=qcollection).count()
+
+			#data for map counties
+			#original
+			# placeset = Region.objects.filter(fk_locationtype=4).annotate(numplaces=Count('location__locationname__locationreference', 
+			# 	filter=Q(location__locationname__locationreference__fk_locationstatus=1) & 
+			# 	Q(location__locationname__locationreference__fk_event__part__support__manifestation__fk_face__fk_seal__sealdescription__fk_collection=qcollection)))
+			#revised
+			placeset = Region.objects.filter(fk_locationtype=4, 
+				location__locationname__locationreference__fk_locationstatus=1, 
+				location__locationname__locationreference__fk_event__part__fk_part__fk_support__fk_face__fk_seal__sealdescription__fk_collection=qcollection
+				).annotate(numplaces=Count('location__locationname__locationreference'))
+
+			# #data for region map 
+			# regiondisplayset = Regiondisplay.objects.annotate(numregions=Count('region__location__locationname__locationreference', 
+			# 	filter=Q(region__location__locationname__locationreference__fk_locationstatus=1) & 
+			# 	Q(region__location__locationname__locationreference__fk_event__part__support__manifestation__fk_face__fk_seal__sealdescription__fk_collection=qcollection)))
+
+			#data for region map 
+			regiondisplayset = Regiondisplay.objects.filter( 
+				region__location__locationname__locationreference__fk_locationstatus=1, 
+				region__location__locationname__locationreference__fk_event__part__fk_part__fk_support__fk_face__fk_seal__sealdescription__fk_collection=qcollection
+				).annotate(numregions=Count('region__location__locationname__locationreference'))
+
+		sealcount = sealset.count()
+		facecount = faceset.count()
+		classcount = faceset.filter(fk_class__isnull=False).exclude(fk_class=10000367).exclude(fk_class=10001007).count()
+
+		# placecounttotal = 0
+		# for i in placeset:
+		# 	placecounttotal = placecounttotal + i.numplaces
+
+		collectioninfo = collectiondata(qcollection, sealcount)
+
+		### generate the collection info data for chart 1 'Percentage of complete entries',
+		sealdescriptioncount = sealdescriptionset.count()
+		sealdescriptiontitle = sealdescriptionset.filter(sealdescription_title__isnull=False).count()
+		sealdescriptionmotif = sealdescriptionset.filter(motif_obverse__isnull=False).count()
+		sealdescriptionidentifier = sealdescriptionset.filter(sealdescription_identifier__isnull=False).count()
+
+		actorscount = sealset.filter(fk_individual_realizer__gt=10000019).count()
+		datecount =sealset.filter(date_origin__gt=1).count()
+
+		title = calpercent(sealdescriptioncount, sealdescriptiontitle)
+		motif = calpercent(sealdescriptioncount, sealdescriptionmotif)
+		identifier = calpercent(sealdescriptioncount, sealdescriptionidentifier)
+		actors = calpercent(sealcount, actorscount)
+		date = calpercent(sealcount, datecount)
+		fclass = calpercent(facecount, classcount)
+		#place = calpercent(placecount, placecounttotal)
+		place = calpercent(placecount, casecount)
+
+
+		#9/9/2022 -- decided to limit the info to actor, date, class, place
+		# data1 = [title, motif, identifier, actors, date, fclass, place]
+		# labels1 = ["title", "description", "identifier", "actor", "date", "class", "place"]
+
+		data1 = [actors, date, fclass, place]
+		labels1 = ["actor", "date", "class", "place"]
+
+
+
+		### generate the collection info data for chart 2 -- 'Percentage of seals per class',
+
+		if (qcollection == 30000287):
+			classset = Classification.objects.order_by('-level').annotate(numcases=Count('face')).exclude(id_class=10001007).exclude(id_class=10000367)
+		else:
+			classset = Classification.objects.order_by('-level').filter(face__fk_seal__sealdescription__fk_collection=qcollection).annotate(numcases=Count('face')).exclude(id_class=10001007).exclude(id_class=10000367)
+
+		data2, labels2 = classdistribution(classset, facecount)
+
+
+
+		### generate the collection info data for chart 3  -- 'Percentage of seals by period',
+
+		data3, labels3 = datedistribution(sealset)
+
+
+
+		### generate the collection info data for chart 4 -- seals per region,
+
+		## data for colorpeth map
+		maplayer1 = get_object_or_404(Jsonstorage, id_jsonfile=1)
+		maplayer = json.loads(maplayer1.jsonfiletxt)
+
+		for i in maplayer:
+			if i == "features":
+				for b in maplayer[i]:
+					j = b["properties"]
+					countyvalue = j["HCS_NUMBER"]
+					countyname = j["NAME"]
+
+					numberofcases = placeset.filter(fk_his_countylist=countyvalue)
+
+					for i in numberofcases:
+						j["cases"] = i.numplaces
+
+
+		## data for region map
+		# make circles data -- defaults -- note that this code is very similar to the function mapdata2
+		region_dict = mapgenerator3(regiondisplayset)
+
+		### generate the collection info data for chart 5 --  'Percentage of actors per class',
+
+		#for print group totals (legacy)
+		if (qcollection == 30000287):
+			printgroupset = Printgroup.objects.annotate(numcases=Count('fk_printgroup', filter=Q(fk_printgroup__sealdescription__fk_collection__gte=0))).order_by('printgroup_order')
+
+		else: printgroupset = Printgroup.objects.annotate(numcases=Count('fk_printgroup', filter=Q(fk_printgroup__sealdescription__fk_collection=qcollection))).order_by('printgroup_order')
+
+		#for modern group system
+		if (qcollection == 30000287):
+			groupset = Groupclass.objects.annotate(numcases=Count('id_groupclass', filter=Q(fk_group_class__fk_group__fk_actor_group__sealdescription__fk_collection__gte=0))).order_by('id_groupclass')
+
+		else:
+			groupset = Groupclass.objects.annotate(numcases=Count('id_groupclass', filter=Q(fk_group_class__fk_group__fk_actor_group__sealdescription__fk_collection=qcollection))).order_by('id_groupclass')
+
+		data5 = []
+		labels5 = []
+		for g in groupset:
+			if (g.numcases > 0):
+				percentagedata = (g.numcases/sealcount)*100 
+				# if percentagedata > 1:
+				data5.append(percentagedata)
+				labels5.append(g.groupclass)
+
+		form = CollectionForm(initial={'collection': collection.id_collection})		
+		context = {
+			'pagetitle': pagetitle,
+			'collectioninfo': collectioninfo,
+			'collection': collection,
+			'contributorset': contributorset,
+			'labels1': labels1,
+			'data1': data1,
+			'labels2': labels2,
+			'data2': data2,
+			'labels3': labels3,
+			'data3': data3,
+			# 'labels4': labels4,
+			# 'data4': data4,
+			'region_dict': region_dict,
+			'maplayer': maplayer,
+			'labels5': labels5,
+			'data5': data5,
+			'form': form,
+		}
+			
+		template = loader.get_template('sealquery/info_collections.html')					
+		return HttpResponse(template.render(context, request))
+
+
+
+
+
+
 ########################### Discover ############################
 
 def discover(request, discovertype):
@@ -152,29 +392,29 @@ def search(request, searchtype):
 			if form.is_valid():
 				qname = form.cleaned_data['name']	
 				qpagination = form.cleaned_data['pagination']
-				qgroup = form.cleaned_data['group']
-				qclass = form.cleaned_data['personclass']
-				qorder = form.cleaned_data['personorder']
+				# qgroup = form.cleaned_data['group']
+				# qclass = form.cleaned_data['personclass']
+				# qorder = form.cleaned_data['personorder']
 
-				if qgroup.isdigit():
-					qgroup = int(qgroup)
-					if int(qgroup) == 2: individual_object = actor_object.filter(corporateentity=True)
-					if int(qgroup) == 1: individual_object = actor_object.filter(corporateentity=False)
+				# if qgroup.isdigit():
+				# 	qgroup = int(qgroup)
+				# 	if int(qgroup) == 2: individual_object = actor_object.filter(corporateentity=True)
+				# 	if int(qgroup) == 1: individual_object = actor_object.filter(corporateentity=False)
 
 				if len(qname) > 0:
 				 	actor_object = actor_object.filter(
-				 		Q(group_name__icontains=qname) | Q(descriptor_name__icontains=qname) | Q(descriptor1__icontains=qname) | Q(descriptor2__icontains=qname) | Q(descriptor3__icontains=qname)
+				 		Q(fk_descriptor_name__descriptor_original__icontains=qname) | Q(fk_descriptor_descriptor1__descriptor_original__icontains=qname) | Q(fk_descriptor_descriptor2__descriptor_original__icontains=qname) | Q(fk_descriptor_descriptor3__descriptor_original__icontains=qname)
 				 		)
 
-				if qclass.isdigit():
-					if int(qclass) > 0:
-						qclass = int(qclass)
-						actor_object = actor_object.filter(fk_group_class=qclass)
+				# if qclass.isdigit():
+				# 	if int(qclass) > 0:
+				# 		qclass = int(qclass)
+				# 		actor_object = actor_object.filter(fk_group_class=qclass)
 
-				if qorder.isdigit():
-					if int(qorder) > 0:
-						qorder = int(qorder)
-						actor_object = actor_object.filter(fk_group_order=qorder)
+				# if qorder.isdigit():
+				# 	if int(qorder) > 0:
+				# 		qorder = int(qorder)
+				# 		actor_object = actor_object.filter(fk_group_order=qorder)
 
 				form = PeopleForm(request.POST)
 
@@ -235,6 +475,8 @@ def search(request, searchtype):
 def analyze(request, analysistype):
 
 	print (analysistype)
+
+
 
 
 
@@ -300,12 +542,21 @@ def actor_page(request, digisig_entity_number):
 	relationship_object = Digisigrelationshipview.objects.filter(fk_individual = digisig_entity_number)
 	relationshipnumber = len(relationship_object)
 
+	# References for each individual
+	reference_object = Referenceindividual.objects.filter(fk_individual = digisig_entity_number).order_by(
+		'fk_event__startdate')
+
+	reference_set = referencecollector(reference_object)
+	print ("referenceset", len(reference_set))
+
 	template = loader.get_template('londonnet/actor.html')
 	context = {
 		'pagetitle': pagetitle,
 		'actor_object': individual_object,
 		'seal_object': seal_object,
 		'sealnumber': sealnumber,
+		'reference_object': reference_object,
+		'reference_set': reference_set,
 		'relationship_object': relationship_object,
 		'relationshipnumber' : relationshipnumber,
 		'sealdescriptionset': sealdescriptionset,
