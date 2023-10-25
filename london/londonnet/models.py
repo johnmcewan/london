@@ -1201,6 +1201,7 @@ class Office(models.Model):
     office = models.TextField(blank=True, null=True)
     office_original = models.TextField(blank=True, null=True)
     office_order = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    fk_groupname = models.IntegerField(blank=True, null=True)
 
     def __str__(self): 
         return self.office or ''
@@ -1368,6 +1369,9 @@ class Referenceindividual(models.Model):
     referencefullname = models.TextField(blank=True, null=True)
     referencecomment = models.TextField(blank=True, null=True)
     fk_relationship_node2 = models.IntegerField(blank=True, null=True)
+    fk_individual2 = models.ForeignKey('Individual', models.DO_NOTHING, related_name="fk_individual_event2", db_column='fk_individual2', blank=True, null=True)
+    fk_individual3 = models.ForeignKey('Individual', models.DO_NOTHING, related_name="fk_individual_event3", db_column='fk_individual3', blank=True, null=True)
+
 
     def __str__(self): 
         return self.referenceindividual or ''

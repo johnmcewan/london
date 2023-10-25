@@ -1,4 +1,4 @@
-{% extends "sealquery/base.html" %}
+{% extends "londonnet/base.html" %}
 
 {% load static %}
 
@@ -26,59 +26,24 @@
 	</div>
 
 	<div class="entity_detail" id="entity_detail">
-		<h3>Collection details <button onclick="toggle('entity-permalink')" class="permalink">Permalink</button></h3> 
+		<h3>Group details <button onclick="toggle('entity-permalink')" class="permalink">Permalink</button></h3> 
 		<table>
 			<tr>
 				<th>Title</th>
-				<td>{{collection.collection_title}}</td>
-				{% if collection.collection_thumbnail != null %}
-				<td rowspan="4">
-					<div>
-						<figure>
-							<img class="modalimage" id="modalimagebase1" src="{% static 'sealquery/images/collections_cover/'%}{{collection.collection_thumbnail}}" alt="catalogue cover photograph" onclick="image(1)">
-						</figure>
-
-						<!-- The Modal -->
-	 					<div id="myModal1" class="modal" style="display: none;">
-						  <span class="close" onclick="modalclose(1)">&times;</span>
-						  <img class="modal-content" id="modalimg1" src="{% static 'sealquery/images/collections_cover/'%}{{collection.collection_thumbnail}}" alt="catalogue cover photograph">
-						  <div class="modal-caption" id="caption1">{{collection.collection_fulltitle}}</div>
-						</div>
-					</div>
-				</td>
-				{% endif %}
+				<td>{{group_name.group_name}}</td>
 			</tr>
-		{% for val1, val2, val3, val4, val5 in contributorset %}
 			<tr>
-				<th>{% cycle 'Credit' '' '' '' '' '' '' '' '' %}</th>
-				<td>
-				{% if val3 %} {{val3}}, {% endif %} 
-				{% if val2 %} {{val2}} {% endif %} 
-				{% if val4 %} {{val4}} {% endif %} 
-				{% if val1 %} ({{val1}}) {% endif %}
-				{% if val5 %}<a href="{{val5}}"  target="_blank">External Link</a>{% endif %}  
-			</tr>
-		{% endfor %}
-		{% resetcycle %}
-
-			<tr>
-				<th>Publication details</th>
-				<td>{{collection.collection_publicationdata}}</td>
+				<th>Group details</th>
+				<td>{{group_name.fk_group_class}}</td>
 			</tr>
 			<tr>
 				<th>Total Entries</th>
-				<td>{{collectioninfo.0}}</td>
+				<td>{{group_name.fk_group_order}}</td>
 			<tr>
 			<tr>
-				<th>Total Seals</th>
-				<td>{{collectioninfo.1}}</td>
+				<th>Total References</th>
+				<td></td>
 			</tr>
-			<tr>
-				<th>Notes</th>
-				<td>{{collection.notes}}</td>
-			</tr>
-
-
 		</table>
 	</div>
 
@@ -143,21 +108,6 @@
 
 
 	<div class="entity_rdf">
-		<div hidden id="rdfajax">{% url 'ajax' digisig_entity_number=collection.id_collection %}</div>
-		<div class="div-caption">
-			RDF 
-			<button id="entitybutton4" onclick="tbtoggle2('entity4', 'entitybutton4')" class="entity">+</button>
-			<button class="RDF-download"><a href="{% url 'data' digisig_entity_number=collection.id_collection %}">Download</button> 
-		</div>
-
-		<div>
-		<table id="entity4" style="display:none;">
-			<tr>
-				<th id="rdfelement">
-				</th>
-			</tr>
-		</table>
-		</div>
 	</div> 
 
 	{{ region_dict|json_script:"mapdata" }}

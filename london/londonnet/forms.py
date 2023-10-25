@@ -428,11 +428,11 @@ class Sealdescription_actorForm(forms.Form):
 
 #Form for analysing government office holders
 
-office_options = [('', 'None')]
+groupname_options = [('', 'None')]
 
-# for e in Position.objects.order_by('pk_position'):
-# 	position_options.append((e.pk_position, e.position))
+for e in Groupname.objects.order_by('group_name').filter(fk_group_order=30):
+	groupname_options.append((e.id_group, e.group_name))
 
-class Government_Form)forms.Form):
+class GovernmentForm(forms.Form):
 	timegroupC = forms.ChoiceField(label='Period', choices=timegroup_options, required=False)
-	office_type = forms.ChoiceField(label='office_options', choices=office_options, required=False)
+	group_name = forms.ChoiceField(label='group_options', choices=groupname_options, required=False)
