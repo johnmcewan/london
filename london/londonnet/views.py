@@ -140,19 +140,28 @@ def information(request, infotype):
 			if form.is_valid():
 				groupnumber = form.cleaned_data['group_name']
 				timegroupCnumber = form.cleaned_data['timegroupC']
-				#make sure values are not empty then try and convert to ints
-				# if len(collectionstr) > 0:
-				# 	digisig_entity_number = int(collectionstr)
-
 
 		group_name = get_object_or_404(Groupname, id_group=groupnumber)
 		individual = get_object_or_404(Individual, fk_group=group_name.id_group)
 		officialreferenceset = Referenceindividual.objects.filter(fk_individual2=individual.id_individual)
 
 		print("Length", len(officialreferenceset))
-		
-		
+				
+		nodeofficeholderset = RelationshipNode.objects.filter(relationshipbranch__fk_individual=individual)
+		branchofficeholderset = RelationshipBranch.objects.filter(fk_relationshipnode__in=nodeofficeholderset).exclude(fk_individual=individual).order_by('fk_individual__fullname_modern')
+		print (len(nodeofficeholderset), len(branchofficeholderset))
 
+		report = []
+
+		for i in branchofficeholderset:
+		 	officereferences = Referenceindividual.objects.filter(fk_individual=i.fk_individual, fk_individual2=individual.id_individual).order_by('fk_event__startdate')
+
+	 		dateactive = dateactive(officereferences)
+
+
+
+		 		# print (i.fk_individual.fullname_original, o.fk_event.startdate)
+			 	report.append(str(i.fk_individual.fullname_original) + " " + str(o.fk_event.startdate) + " " + str(o.fk_event.enddate))
 
 		### This code prepares collection info box and the data for charts on the collection page
 
@@ -351,6 +360,9 @@ def information(request, infotype):
 		context = {
 			'pagetitle': pagetitle,
 			'group_name': group_name,
+			'nodeofficeholderset': nodeofficeholderset, 
+			'branchofficeholderset': branchofficeholderset,
+			'report': report,
 			
 			# 'collectioninfo': collectioninfo,
 			# 'collection': collection,
