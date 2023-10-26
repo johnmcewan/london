@@ -32,6 +32,88 @@ from rdflib.namespace import FOAF, XSD
 # deletesealfull {very dangerous}
 # addseal
 
+
+# handle range dates -- if range, then determine midpoint and precision
+def datetester(date1, date2):
+	returndate = 0
+	returnprecision = 0
+	#this is a hack -- must be a better way to test if value is datetime.
+
+	#print (date1, date2)
+	if str(type(date1)) == "<class 'datetime.date'>":
+		date1 = date1.year
+	if date1 > 0:
+		returndate = date1
+		returnprecision = 0
+		if(date2 is not None):
+			if str(type(date2)) == "<class 'datetime.date'>":
+				date2 = date2.year
+			if date2 > date1:
+				returndate = int((date1 + date2)/2)
+				returnprecision = int((date2-date1)/2)
+
+	return(returndate, returnprecision)
+
+def dateactive(referenceset):
+	firstdate = 0
+	firstdateprecision = 10000
+	finaldate = 10000
+	finaldateprecision = 10000
+
+	print ("start analysis")
+	for reference in referenceset:
+		print ("case")
+		indate = 0
+		inprecision = 0
+
+		targetevent = reference.fk_event
+
+		#Nb: repository_startdate is a date field so have to pull the year...				
+		if(targetevent.repository_startdate is not None):
+			indate, inprecision = datetester(targetevent.repository_startdate, targetevent.repository_enddate)
+
+		print ("repository", indate, inprecision)
+		
+		#Nb: startdate is a date field so have to pull the year...
+		if(targetevent.startdate is not None):
+			indate, inprecision = datetester(targetevent.startdate, targetevent.enddate)
+
+		print ("datestandard", indate, inprecision)
+
+		if(targetevent.event_yearstart is not None):
+			indate, inprecision = datetester(targetevent.event_yearstart, targetevent.event_yearend)
+
+		print ("daterefined", indate, inprecision)
+
+		## This loop sorts the various dates of the event to find the best date
+
+		if (indate > 0):
+			score1 = (indate + (inprecision * 2))
+			score2 = (firstdate + (firstdateprecision * 2))
+			score3 = (indate - (inprecision * 2))
+			score4 = (finaldate - (finaldateprecision * 2))
+
+			print ("score1", score1, "score3", score3)
+			print ("score2", score2, "score4", score4)
+
+			if score1 < score2:
+				print("lower")
+				firstdate = indate 
+				firstdateprecision = inprecision
+
+				print ("selectedfirst", firstdate, firstdateprecision)
+
+			if score3 > score4:
+				print("higher")
+				# additionalnumber = math.trunc((inprecision/2))
+				finaldate = indate 
+				finaldateprecision = inprecision
+
+				print ("selectedfinal", finaldate, finaldateprecision)
+
+	return (firstdate, firstdateprecision, finaldate, finaldateprecision)
+
+
 def referencecollector(reference_object):
 
 	reference_set = {}

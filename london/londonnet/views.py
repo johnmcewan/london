@@ -151,17 +151,17 @@ def information(request, infotype):
 		branchofficeholderset = RelationshipBranch.objects.filter(fk_relationshipnode__in=nodeofficeholderset).exclude(fk_individual=individual).order_by('fk_individual__fullname_modern')
 		print (len(nodeofficeholderset), len(branchofficeholderset))
 
-		report = []
+		officer_report = []
 
 		for i in branchofficeholderset:
 		 	officereferences = Referenceindividual.objects.filter(fk_individual=i.fk_individual, fk_individual2=individual.id_individual).order_by('fk_event__startdate')
 
-	 		dateactive = dateactive(officereferences)
+	 		firstdate, firstdateprecision, finaldate, finaldateprecision = dateactive(officereferences)
 
+	 		officer_report.append(str(firstdate) + " " + str(finaldate))
 
-
-		 		# print (i.fk_individual.fullname_original, o.fk_event.startdate)
-			 	report.append(str(i.fk_individual.fullname_original) + " " + str(o.fk_event.startdate) + " " + str(o.fk_event.enddate))
+	 		# # print (i.fk_individual.fullname_original, o.fk_event.startdate)
+		 	# report.append(str(i.fk_individual.fullname_original) + " " + str(o.fk_event.startdate) + " " + str(o.fk_event.enddate))
 
 		### This code prepares collection info box and the data for charts on the collection page
 
@@ -362,7 +362,7 @@ def information(request, infotype):
 			'group_name': group_name,
 			'nodeofficeholderset': nodeofficeholderset, 
 			'branchofficeholderset': branchofficeholderset,
-			'report': report,
+			'officer_report': officer_report,
 			
 			# 'collectioninfo': collectioninfo,
 			# 'collection': collection,
