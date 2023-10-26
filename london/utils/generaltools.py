@@ -62,7 +62,7 @@ def dateactive(referenceset):
 
 	print ("start analysis")
 	for reference in referenceset:
-		print ("case")
+		#print ("case")
 		indate = 0
 		inprecision = 0
 
@@ -72,18 +72,18 @@ def dateactive(referenceset):
 		if(targetevent.repository_startdate is not None):
 			indate, inprecision = datetester(targetevent.repository_startdate, targetevent.repository_enddate)
 
-		print ("repository", indate, inprecision)
+		#print ("repository", indate, inprecision)
 		
 		#Nb: startdate is a date field so have to pull the year...
 		if(targetevent.startdate is not None):
 			indate, inprecision = datetester(targetevent.startdate, targetevent.enddate)
 
-		print ("datestandard", indate, inprecision)
+		#print ("datestandard", indate, inprecision)
 
 		if(targetevent.event_yearstart is not None):
 			indate, inprecision = datetester(targetevent.event_yearstart, targetevent.event_yearend)
 
-		print ("daterefined", indate, inprecision)
+		#print ("daterefined", indate, inprecision)
 
 		## This loop sorts the various dates of the event to find the best date
 
@@ -93,23 +93,23 @@ def dateactive(referenceset):
 			score3 = (indate - (inprecision * 2))
 			score4 = (finaldate - (finaldateprecision * 2))
 
-			print ("score1", score1, "score3", score3)
-			print ("score2", score2, "score4", score4)
+			#print ("score1", score1, "score3", score3)
+			#print ("score2", score2, "score4", score4)
 
 			if score1 < score2:
-				print("lower")
+				#print("lower")
 				firstdate = indate 
 				firstdateprecision = inprecision
 
-				print ("selectedfirst", firstdate, firstdateprecision)
+				#print ("selectedfirst", firstdate, firstdateprecision)
 
 			if score3 > score4:
-				print("higher")
+				#print("higher")
 				# additionalnumber = math.trunc((inprecision/2))
 				finaldate = indate 
 				finaldateprecision = inprecision
 
-				print ("selectedfinal", finaldate, finaldateprecision)
+				#print ("selectedfinal", finaldate, finaldateprecision)
 
 	return (firstdate, firstdateprecision, finaldate, finaldateprecision)
 

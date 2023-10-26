@@ -87,341 +87,53 @@
 	</div>
 
 
-	<div class="entity_event" id="entity_event">
-		<div class="div-caption">
-			Temporal Distribution <button id="entitybutton2" onclick="tbtoggle('Chart3', 'entitybutton2')" class="entity">+</button>
-		</div>
-		<div>
-			<canvas id="Chart3" style="display:none;"></canvas>
-		</div>
-	</div>
-
-
-	<div class="entity_manifestations" id="entity_manifestations">
-		<div class="div-caption">
-			Spatial Distribution <button id="entitybutton3" onclick="maptoggle('mapid2', 'entitybutton3')" class="entity">+</button>
-		</div>
-		<div id="mapid2" style="display:none;"></div>
-	</div>
-
-
-	<div class="entity_relationship" id="entity_relationship">
-		<div class="div-caption">
-			Actors <button id="entitybutton4" onclick="tbtoggle('Chart5', 'entitybutton4')" class="entity">+</button>
-		</div>
-		<div>
-			<canvas id="Chart5" style="display:none;"></canvas>
-		</div>
-	</div>
-
-
-	<div class="entity_rdf">
-	</div> 
-
-	{{ region_dict|json_script:"mapdata" }}
-
-<!-- 	{{ maplayer|json_script:"mapboundaries" }} -->
-
 <script>
-
-var ctx1 = document.getElementById('Chart1').getContext('2d');
-var chart1 = new Chart(ctx1, {
-    // The type of chart we want to create
-    type: 'bar',
-    // The data for our dataset
-    data: {
-        labels: [ {% for i in labels1 %} '{{i}}', {% endfor %} ],
-        datasets: [{
-        	axis: 'y',
-            backgroundColor: "#8e5ea2",
-            borderColor: "#8e5ea2",
-            data: [ {% for i in data1 %} {{i}}, {% endfor %} ]
-        		}]
-        },
-    options: {
-    	indexAxis: 'y',
-    	plugins: {
-    		legend: {
-    			display:false,
-	    		},
-	    	title: {
-	    	display: true,
-	    		text: 'Percentage of complete entries in Digisig, by field, for the selected collection',
-	    	}
-			},
-    	}
-});
-
 
 var ctx2 = document.getElementById('Chart2').getContext('2d');
+
+// const xValues = ["Italy", "France", "Spain", "USA", "Argentina"];
+// const yValues = [[155, 179], [149,189], [144, 201], [124, 200], [115, 200]];
+// const barColors = ["red", "green","blue","orange","brown"];
+
+
+const xValues = [ {% for i in labels1 %} {{i}}, {% endfor %} ];
+const yValues = [ {% for i in data1 %} {{i}}, {% endfor %} ];
+const zValues = [ {% for i in data2 %} {{i}}, {% endfor %} ];
+
 var chart2 = new Chart(ctx2, {
-    // The type of chart we want to create
-    type: 'bar',
-    // The data for our dataset
-    data: {
-        labels: [ {% for i in labels2 %} '{{i}}', {% endfor %} ],
-        datasets: [{
-        	axis: 'y',
-            backgroundColor: "#8e5ea2",
-            borderColor: "#8e5ea2",
-            data: [ {% for i in data2 %} {{i}}, {% endfor %} ]
-        		}]
-        },
-    options: {
-    	indexAxis: 'y',
-    	scales: {
-		    y: {
-		      ticks: {
-		        autoSkip: false,
-		      }
-		  }
-		},
-    	plugins: {
-    		legend: {
-    			display:false,
-	    		},
-	    	title: {
-	    	display: true,
-	    		text: 'Percentage of seals by class (minimum 1% of total)',
-	    	}
-			},
-    	}
+  type: "bar",
+  data: {
+	labels: xValues,
+    datasets: [{
+    	axis: 'y',
+    	label: 'Aldermen',
+      backgroundColor: "red",
+      data: yValues,
+      order: 2
+    }, {
+    	label: 'ML Predicted Date',
+      type: 'line',
+      backgroundColor: "black",
+      data: zValues,
+      order: 1
+    }]
+  },
+  options: {
+   	indexAxis: 'y',
+  	scales: {
+  		x: {
+  			min:1180,
+  		}
+  	},
+    legend: {display: false},
+    title: {
+      display: true,
+      text: "Comparison of ML dates to Cataloguer Dates"
+    }
+  }
 });
 
-
-var ctx3 = document.getElementById('Chart3').getContext('2d');
-var chart3 = new Chart(ctx3, {
-    // The type of chart we want to create
-    type: 'bar',
-    // The data for our dataset
-    data: {
-        labels: [ {% for i in labels3 %} '{{i}}', {% endfor %} ],
-        // ticks: {
-        // 	autoSkip: false,
-        // 	maxTicksLimit: 40
-        // },
-        datasets: [{
-        	axis: 'y',
-            backgroundColor: "#8e5ea2",
-            borderColor: "#8e5ea2",
-            data: [ {% for i in data3 %} {{i}}, {% endfor %} ]
-        		}]
-        },
-    options: {
-    	indexAxis: 'y',
-    	plugins: {
-    		legend: {
-    			display:false,
-	    		},
-	    	title: {
-	    	display: true,
-	    		text: 'Number of seals by century',
-	    	}
-			},
-    	}
-});
-
-
-// var ctx4 = document.getElementById('Chart4').getContext('2d');
-// var chart4 = new Chart(ctx4, {
-//     // The type of chart we want to create
-//     type: 'bar',
-//     // The data for our dataset
-//     data: {
-//         labels: [ {% for i in labels4 %} '{{i}}', {% endfor %} ],
-//         datasets: [{
-//         	axis: 'y',
-//             backgroundColor: "#8e5ea2",
-//             borderColor: "#8e5ea2",
-//             data: [ {% for i in data4 %} {{i}}, {% endfor %} ]
-//         		}]
-//         },
-//     options: {
-//     	indexAxis: 'y',
-//     	plugins: {
-//     		legend: {
-//     			display:false,
-// 	    		},
-// 	    	title: {
-// 	    	display: true,
-// 	    		text: 'Portion of cases with per region',
-// 	    	}
-// 			},
-//     	}
-// });
-
-
-var ctx5 = document.getElementById('Chart5').getContext('2d');
-var chart5 = new Chart(ctx5, {
-    // The type of chart we want to create
-    type: 'bar',
-    // The data for our dataset
-    data: {
-        labels: [ {% for i in labels5 %} '{{i}}', {% endfor %} ],
-        datasets: [{
-        	axis: 'y',
-            backgroundColor: "#8e5ea2",
-            borderColor: "#8e5ea2",
-            data: [ {% for i in data5 %} {{i}}, {% endfor %} ]
-        		}]
-        },
-    options: {
-    	indexAxis: 'y',
-    	plugins: {
-    		legend: {
-    			display:false,
-	    		},
-	    	title: {
-	    	display: true,
-	    		text: 'Percentage of seals identified with corporate actors, by class of corporate actor',
-	    	}
-			},
-    	}
-});
-
-
-// clear all user inputs from the select boxes in the form 
-	function myFunction() {
-		document.getElementById("id_collection").value = '';
-	}
 
 </script>
-
-
-<script>
-
-// function onEachFeature(feature, layer) {
-//    // does this feature have a property named popupContent?
-//     if (feature.properties && feature.properties.popupContent) {
-//         layer.bindPopup(feature.properties.popupContent);
-//     }
-// }
-
-// the second map
-	var geojsonFeature1 = JSON.parse(document.getElementById('mapdata').textContent);
-	var map = L.map('mapid2', {scrollWheelZoom:false}).setView([52,0], 5);
-	var layer = new L.StamenTileLayer("watercolor");
-	map.addLayer(layer);
-
-	// control that shows state info on hover
-	var info = L.control();
-
-	info.onAdd = function (map) {
-		this._div = L.DomUtil.create('div', 'info');
-		this.update();
-		return this._div;
-	};
-
-	info.update = function (props) {
-		this._div.innerHTML = '<h4>Cases per area</h4>' +  (props ?
-			'<b>' + props.location + '</b><br />' + props.count + ' cases' : 'Hover over an area');
-	};
-
-	info.addTo(map);
-
-	// get color depending on population density value
-	function getColor(d) {
-		return d > 8000 ? '#49006a' :
-			d > 6000  ? '#7a0177' :
-			d > 4000  ? '#ae017e' :
-			d > 2000  ? '#dd3497' :
-			d > 1000   ? '#f768a1' :
-			d > 500   ? '#fa9fb5' :
-			d > 100   ? '#fcc5c0' :  
-			d > 50   ? '#fde0dd' : '#fff7f3';
-	}
-
-	function style(feature) {
-		return {
-			weight: 2,
-			opacity: 1,
-			color: 'white',
-			dashArray: '3',
-			fillOpacity: 0.7,
-			fillColor: getColor(feature.properties.count)
-		};
-	}
-
-	function highlightFeature(e) {
-		var layer = e.target;
-
-		layer.setStyle({
-			weight: 5,
-			color: '#666',
-			dashArray: '',
-			fillOpacity: 0.7
-		});
-
-		if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
-			layer.bringToFront();
-		}
-
-		info.update(layer.feature.properties);
-	}
-
-
-	var legend = L.control({position: 'bottomright'});
-
-	legend.onAdd = function (map) {
-
-		var div = L.DomUtil.create('div', 'info legend');
-		var grades = [0, 50, 100, 500, 1000, 2000, 4000, 6000, 8000];
-		var labels = [];
-		var from, to;
-
-		for (var i = 0; i < grades.length; i++) {
-			from = grades[i];
-			to = grades[i + 1];
-
-			labels.push(
-				'<i style="background:' + getColor(from + 1) + '"></i> ' +
-				from + (to ? '&ndash;' + to : '+'));
-		}
-
-		div.innerHTML = labels.join('<br>');
-		return div;
-	};
-
-	legend.addTo(map);
-
-
-	var geojson;
-
-	function resetHighlight(e) {
-		geojson.resetStyle(e.target);
-		info.update();
-	}
-
-	function zoomToFeature(e) {
-		map.fitBounds(e.target.getBounds());
-	}
-
-	function onEachFeature(feature, layer) {
-		layer.on({
-			mouseover: highlightFeature,
-			mouseout: resetHighlight,
-			click: zoomToFeature
-		});
-	}
-
-	// working with circles 2020apr26
-	geojson = L.geoJSON(geojsonFeature1, {
-
-		pointToLayer: function (feature, latlng) {
-			return L.circle(latlng, {
-				radius: 50000,
-				weight: 2,
-				opacity: 1,
-				color: 'white',
-				dashArray: '3',
-				fillOpacity: 0.7,
-				fillColor: getColor(feature.properties.count)
-			});
-		},
-		onEachFeature: onEachFeature
-	}).addTo(map);
-
-</script>
-
 
 {% endblock %}
