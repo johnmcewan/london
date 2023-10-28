@@ -127,7 +127,7 @@ def information(request, infotype):
 ########################### Civic Government #########################
 	if infotype == "info_government":
 
-		pagetitle = 'Civic Government'
+		pagetitle = 'Government'
 
 		#default
 		groupnumber= 927
@@ -148,12 +148,14 @@ def information(request, infotype):
 		#print("Length", len(officialreferenceset))
 		
 		## List of office holders -- find nodes then branches		
-		nodeofficeholderset = RelationshipNode.objects.filter(relationshipbranch__fk_individual=individual)
-		branchofficeholderset = RelationshipBranch.objects.filter(
-			fk_relationshipnode__in=nodeofficeholderset).exclude(
-			fk_individual=individual).order_by(
-			# 'fk_individual__fullname_modern')
-			'fk_relationshipnode__start_year')
+		#nodeofficeholderset = RelationshipNode.objects.filter(relationshipbranch__fk_individual=individual)
+		# branchofficeholderset = RelationshipBranch.objects.filter(
+		# 	fk_relationshipnode__in=nodeofficeholderset).exclude(
+		# 	fk_individual=individual).order_by(
+		# 	# 'fk_individual__fullname_modern')
+		# 	'fk_relationshipnode__start_year')
+
+		branchofficeholderset = officeholders(individual)
 
 		data1 = []
 		labels1 = []
@@ -231,7 +233,83 @@ def information(request, infotype):
 		template = loader.get_template('londonnet/info_government.html')					
 		return HttpResponse(template.render(context, request))
 
+################### Alderman ############################
+	if infotype == "info_aldermen":
 
+		pagetitle = 'Aldermen'
+
+		#default
+		groupnumber= 927
+		timegroupCnumber= 4
+		alderman_selected = 10000029
+
+		#adjust values if form submitted
+		if request.method == 'POST':
+			form = GovernmentForm(request.POST)
+			
+			if form.is_valid():
+				groupnumber = form.cleaned_data['group_name']
+				timegroupCnumber = form.cleaned_data['timegroupC']
+				alderman_selected = form.cleaned_data['alderman_name']
+
+		individual_info = get_object_or_404(Individual, id_individual=alderman_selected)
+		print (individual_info)
+
+		references_set = Referenceindividual.objects.filter(fk_individual=alderman_selected)
+		references_count = references_set.count()
+
+		references_alderman = references_set.filter(Q(fk_individual2 = 10140149) | Q(fk_individual3 = 10140149))
+		references_alderman_count = references_alderman.count()
+
+		references_alderman_event = references_alderman.values("fk_event")
+
+		# for r in references_alderman:
+		# 	print (r.fk_event)
+
+		eventset = Event.objects.filter(pk_event__in=references_alderman_event)
+
+		print ("eventsetcount", (eventset.count()))
+		# for event in eventset:
+		# 	print (event)
+
+		locationset1 = Locationreference.objects.filter(fk_event__in=eventset).order_by("fk_event__startdate")
+
+		#map points
+		#data for location map
+		locationset = Location.objects.filter(
+			Q(locationname__locationreference__fk_event__in=eventset)).annotate(count=Count('locationname__locationreference__fk_event'))
+		location_dict, center_long, center_lat = mapgenerator2(locationset)
+
+		#data for region map 
+		regiondisplayset = Regiondisplay.objects.filter( 
+			region__location__locationname__locationreference__fk_locationstatus=1, 
+			region__location__locationname__locationreference__fk_event__in=eventset
+			).annotate(numregions=Count('region__location__locationname__locationreference'))
+
+		region_dict = mapgenerator3(regiondisplayset)
+ 
+		# print (location_dict)
+
+
+		form = GovernmentForm()
+		context = {
+			'pagetitle': pagetitle,
+			'individual_info': individual_info,
+			'references_set': references_set, 
+			'references_count': references_count,
+			'references_alderman': references_alderman,
+			'references_alderman_count': references_alderman_count,
+			'region_dict': region_dict,
+			'location_dict': location_dict,
+			'locationset1': locationset1,
+			# # 'officer_report': officer_report,
+			# 'data1': data1,
+			# 'labels1': labels1,
+			'form': form,
+		}
+			
+		template = loader.get_template('londonnet/info_aldermen.html')					
+		return HttpResponse(template.render(context, request))
 
 ########################### Discover ############################
 

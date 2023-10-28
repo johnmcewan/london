@@ -33,6 +33,18 @@ from rdflib.namespace import FOAF, XSD
 # addseal
 
 
+# Office holders
+def officeholders(individual):
+	## List of office holders -- find nodes then branches		
+	nodeofficeholderset = RelationshipNode.objects.filter(relationshipbranch__fk_individual=individual)
+	branchofficeholderset = RelationshipBranch.objects.filter(
+		fk_relationshipnode__in=nodeofficeholderset).exclude(
+		fk_individual=individual).order_by(
+		# 'fk_individual__fullname_modern')
+		'fk_relationshipnode__start_year')
+
+	return (branchofficeholderset)
+
 # handle range dates -- if range, then determine midpoint and precision
 def datetester(date1, date2):
 	returndate = 0

@@ -4,6 +4,9 @@ from django.db.models import Q
 
 from .models import * 
 
+# from utils.mltools import * 
+from utils.generaltools import *
+
 # #Form for querying seal impressions
 # repositories_options = [('','None')]
 # series_options = [('', 'None')]
@@ -429,10 +432,16 @@ class Sealdescription_actorForm(forms.Form):
 #Form for analysing government office holders
 
 groupname_options = [('', 'None')]
+aldermen_options = [('', 'None')]
 
 for e in Groupname.objects.order_by('group_name').filter(fk_group_order=30):
 	groupname_options.append((e.id_group, e.group_name))
 
+aldermengroup = officeholders(10140149)
+for e in aldermengroup:
+	aldermen_options.append((e.fk_individual.id_individual, e.fk_individual.fullname_original))
+
 class GovernmentForm(forms.Form):
 	timegroupC = forms.ChoiceField(label='Period', choices=timegroup_options, required=False)
 	group_name = forms.ChoiceField(label='group_options', choices=groupname_options, required=False)
+	alderman_name = forms.ChoiceField(label='aldermen', choices=aldermen_options, required=False)

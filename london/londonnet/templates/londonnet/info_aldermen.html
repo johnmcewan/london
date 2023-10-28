@@ -1,0 +1,210 @@
+{% extends "londonnet/base.html" %}
+
+{% load static %}
+
+{% block content %}
+
+	<div class="home-banner"></div>
+	<div class="sidepanel-left"></div>
+	<div class="sidepanel-right"></div>
+
+	<div class="main-title">
+		<h1>{{pagetitle}}</h1>
+	</div>
+
+	<div class="mainpage" id="mainpage"> </div>
+
+	<div class="entity-permalink" id="entity-permalink">
+		<div class="permalinkinfo" id="permalinkinfo">
+		Permalink
+		<button onclick="toggle('entity-permalink')" class="closebutton">X</button>
+		<form action="#">
+			<label>Copy this URL to link to this page:</label>
+			<input id="input" class="text" name="" value="http://www.digisig.org/entity/{{collection.id_collection}}" type="text" readonly>
+		</form>
+		</div>
+	</div>
+
+	<div class="entity_detail" id="entity_detail">
+		<h3>Group details <button onclick="toggle('entity-permalink')" class="permalink">Permalink</button></h3> 
+		<table>
+			<tr>
+				<th>Name</th>
+				<td>{{individual_info.fullname_original}} {{individual_info.id_individual }}</td>
+			</tr>
+			<tr>
+				<th>Total References</th>
+				<td>{{ references_count }}</td>
+			<tr>
+			<tr>
+				<th>Total Alderman References</th>
+				<td>{{ references_alderman_count }}</td>
+			</tr>
+
+			{% for i in report %}
+			<tr>
+				<th>{{i}}</th>
+			</tr>
+			{% endfor %}
+
+
+		</table>
+	</div>
+
+	<div class="entity_chartfilter" id="entity_chartfilter">
+		<div>
+			<h2>Select</h2>		
+			<form id="form" action="/information/info_aldermen" method="post">
+		    	{% csrf_token %}
+		    	{{ form.non_field_errors }}
+		    	<div class="fieldWrapper">
+				    {{ form.alderman_name.errors }}
+				    <label for="{{ form.alderman_name.id_for_label }}">Aldermen</label>
+				    {{ form.alderman_name }}
+					</div>
+				<div class="fieldWrapper">
+		    		<input class="submit" type="submit" value="Submit">
+		    	</div>
+			</form>
+		</div>
+	</div>
+
+	<div class="entity_chart" id="entity_chart">
+		<canvas id="Chart1"></canvas>
+	</div>
+
+	<div class="entity_seals" id="entity_seals">
+
+		<div class="div-caption">
+				Spatial Distribution <button class="entity">+</button>
+		</div>
+	<div class="entity_chart" id="entity_chart">
+		<div id="mapid1"></div>
+	</div>
+
+
+	</div>
+
+<!-- 	<div class="entity_event" id="entity_event">
+		<div class="div-caption">
+			Temporal Distribution <button class="entity">+</button>
+		</div>
+		<div>
+			<canvas id="mapid1"></canvas>
+		</div>
+	</div> -->
+
+	<div class="entity_manifestations" id="entity_manifestations">
+<!-- 		<div class="div-caption">
+				Spatial Distribution <button class="entity">+</button>
+		</div>
+	<div class="entity_chart" id="entity_chart">
+		<div id="mapid1"></div>
+	</div>
+ -->
+		<div class="div-caption">
+			Classification <button id="entitybutton1" onclick="tbtoggle('Chart2', 'entitybutton1')" class="entity">+</button>
+		</div>
+		<div>
+			<canvas id="Chart2" style="display:none;"></canvas>
+			<table>
+				{% for location in locationset1 %}
+				<tr>
+					<td>{{ location.fk_event.startdate}}, {{ location.fk_event.enddate}}</td>
+					<td>{{ location.fk_locationname}}</td>
+					<td>{{ location.pk_location_reference}}, {{location.fk_event}} </td>
+				</tr>
+				{% endfor %}
+			</table>
+		</div>
+	</div>
+
+
+	{{ location_dict|json_script:"mapdata1" }}
+	{{ counties_dict|json_script:"mapdata2" }}
+	{{ region_dict|json_script:"mapdata3" }}
+
+
+<!-- 	{{ region_dict|json_script:"mapdata" }}
+	{{ location_dict|json_script:"mapdata1" }} -->
+
+<script>
+
+// var ctx2 = document.getElementById('Chart2').getContext('2d');
+
+// // const xValues = ["Italy", "France", "Spain", "USA", "Argentina"];
+// // const yValues = [[155, 179], [149,189], [144, 201], [124, 200], [115, 200]];
+// // const barColors = ["red", "green","blue","orange","brown"];
+
+
+// const xValues = [ {% for i in labels1 %} {{i}}, {% endfor %} ];
+// const yValues = [ {% for i in data1 %} {{i}}, {% endfor %} ];
+// const zValues = [ {% for i in data2 %} {{i}}, {% endfor %} ];
+
+// var chart2 = new Chart(ctx2, {
+//   type: "bar",
+//   data: {
+// 	labels: xValues,
+//     datasets: [{
+//     	axis: 'y',
+//     	label: 'Aldermen',
+//       backgroundColor: "red",
+//       data: yValues,
+//       order: 2
+//     }, {
+//     	label: 'ML Predicted Date',
+//       type: 'line',
+//       backgroundColor: "black",
+//       data: zValues,
+//       order: 1
+//     }]
+//   },
+//   options: {
+//    	indexAxis: 'y',
+//   	scales: {
+//   		x: {
+//   			min:1180,
+//   		}
+//   	},
+//     legend: {display: false},
+//     title: {
+//       display: true,
+//       text: "Comparison of ML dates to Cataloguer Dates"
+//     }
+//   }
+// });
+
+
+</script>
+
+
+<script>
+// This code could be rendered much more concise -- plenty of duplication here -- May/2022
+
+function onEachFeature(feature, layer) {
+    // does this feature have a property named popupContent?
+    if (feature.properties && feature.properties.popupContent) {
+        layer.bindPopup(feature.properties.popupContent);
+    }
+	}
+
+	var geojsonFeature1 = JSON.parse(document.getElementById('mapdata1').textContent);
+	var placeslen = Object.keys(geojsonFeature1).length;
+
+	if (placeslen > 1) { 
+		var map1 = L.map('mapid1', {scrollWheelZoom:false}).setView([51.5159,-0.0939],12);
+			var layer1 = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
+	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+	subdomains: 'abcd',
+	maxZoom: 20
+});
+		map1.addLayer(layer1);
+		L.geoJSON(geojsonFeature1, {onEachFeature: onEachFeature}).addTo(map1);
+	}
+
+</script>
+
+
+
+
+{% endblock %}
