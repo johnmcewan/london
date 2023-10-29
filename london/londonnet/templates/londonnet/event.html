@@ -1,0 +1,171 @@
+{% extends "londonnet/base.html" %}
+
+{% load static %}
+
+{% block content %}
+
+	<div class="item-banner"></div>
+	<div class="sidepanel-left"></div>
+	<div class="sidepanel-right"></div>
+
+
+	<div class="main-title">
+		<h1>{{pagetitle}}</h1>
+	</div>
+
+	<div class="mainpage"></div>
+			
+	<div class="entity_detail" id="entity_detail">
+		<h3>
+			Event details 
+			{% if authenticationstatus == "authenticated" %}
+			<button class="permalink"><a href=><a href="{% url 'edit_item' digisig_entity_number=item_object.id_item %}">Edit</a></button>
+			{% endif %} 
+			<button onclick="toggle('entity-permalink')" class="permalink entity">Permalink</button>
+		</h3>
+		
+		<table>
+			<tr>
+				<th>Location</th>
+				<td>{{event_object}}</td>	
+				<td rowspan>
+				</td>
+			</tr>
+			<tr>
+				<th>Reference <a class="help" href="{% url 'entity' digisig_entity_number=10001567 %}" target="_blank"><i class="fas fa-question-circle"></i></a></th>
+				<td>{{item_object.shelfmark}}
+			{% for linktext2 in externallink_object %}
+				 <a href="{{linktext2.external_link}}" target="_blank">External Link</a>
+			{% endfor %}
+				</td>
+			</tr>
+
+			<tr>		
+				<th>Date (Repository)</th>
+				<td>{{event_set.0.0}}
+					{% if event_set.0.1 > event_set.0.0 %} - {{event_set.0.1}} {% endif %}
+				</td>
+			</tr>
+
+			<tr>
+				<th>Date (Digisig)</th>
+				<td>{{event_set.0.3}}
+					{% if event_set.0.4 > event_set.0.3 %} - {{event_set.0.4}} {% endif %}
+				</td>
+			</tr>
+
+			<tr>		
+				{% if event_set.0.2 != null %}
+				<th>Location (Repository)</th>
+				<td>{{event_set.0.2}}</td>
+			</tr>
+
+			<tr>
+				{% if event_set.0.5 != null %}
+				<th>Participants (Digisig)</th>
+				<td><a href="{% url 'entity' event_set.0.6 %}">{{event_set.0.5}}</td>
+				{% endif %}
+			</tr>
+			
+		</table>
+
+		{% if event_set.0.6 != 50015247 %} 
+		<div class="item_map">
+			<div id="mapid"> </div>
+		</div>
+		{% endif %}	
+
+	</div>
+
+	<div class="entity-permalink" id="entity-permalink">
+		<div class="permalinkinfo" id="permalinkinfo">
+		Permalink
+		<button onclick="toggle('entity-permalink')" class="closebutton">X</button>
+		<form action="#">
+			<label>Copy this URL to link to this page:</label>
+			<input id="input" class="text" name="" value="http://www.digisig.org/entity/{{item_object.id_item}}" type="text" readonly>
+		</form>
+		</div>
+	</div>
+
+
+	<div class="entity_seals" id="entity_seals">
+		<div class="div-caption">
+			Participants <button id="entitybutton1" onclick="tbtoggle('entity1', 'entitybutton1')" class="entity">+</button>
+		</div>
+
+		<div>
+		<table id="entity1" style="display:none;">
+
+		</table>
+		</div>
+	</div>
+
+	<div class="entity_rdf">
+		<div hidden id="rdfajax">{% url 'ajax' digisig_entity_number=item_object.id_item %}</div>
+		<div class="div-caption">
+			RDF 
+			<button id="entitybutton3" onclick="tbtoggle2('entity3', 'entitybutton3')" class="entity">+</button>
+			<button class="RDF-download"><a href="{% url 'data' digisig_entity_number=item_object.id_item %}">Download</a></button> 
+		</div>
+
+
+		<div>
+		<table id="entity3" style="display:none;">
+			<tr>
+				<th id="rdfelement">
+				</th>
+			</tr>
+		</table>
+		</div>
+	</div>
+
+
+{{ mapdic|json_script:"mapdata" }}
+
+<script>
+function onEachFeature(feature, layer) {
+    // does this feature have a property named popupContent?
+    if (feature.properties && feature.properties.popupContent) {
+        layer.bindPopup(feature.properties.popupContent);
+    }
+}
+
+	const longitude = '{{ event_set.0.7|safe }}';
+	const latitude = '{{ event_set.0.8|safe }}';
+
+	var geojsonFeature = JSON.parse(document.getElementById('mapdata', {scrollWheelZoom:false}).textContent);
+	var mymap = L.map('mapid').setView([latitude,longitude], 4);	
+	var layer = new L.StamenTileLayer("watercolor");
+	mymap.addLayer(layer);
+	L.geoJSON(geojsonFeature, {onEachFeature: onEachFeature}).addTo(mymap);
+
+</script>
+
+
+
+<!-- 		<script>
+			const mydata = '{{ location_dict.location|safe }}';
+			const longitude = '{{ location_dict.longitude|safe }}';
+			const latitude = '{{ location_dict.latitude|safe }}';
+			console.log(mydata);
+			
+			var outputdata = JSON.parse(mydata);
+			console.log(outputdata)
+
+			var mymap = L.map('mapid').setView([latitude, longitude], 5);
+
+			L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+			    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+			    maxZoom: 18,
+			    id: 'mapbox/streets-v11',
+			    tileSize: 512,
+			    zoomOffset: -1,
+			    accessToken: 'pk.eyJ1Ijoiam1jZXdhbjMiLCJhIjoiY2tocDhqb2Q1MDVtazJxbzljdjNtYmZwdiJ9.C289GV3b1ENBwVxsGgi38A'
+			}).addTo(mymap);
+
+			L.geoJSON(outputdata).addTo(mymap);
+		</script> -->
+
+
+{% endblock %}

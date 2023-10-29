@@ -20,14 +20,14 @@ urlpatterns = [
     # re_path(r'edit/pas/(?P<digisig_entity_number>[0-9]{8})', views.edit_pas, name='edit_pas'),
     # re_path(r'edit/birch/(?P<digisig_entity_number>[0-9]{8})', views.edit_birch, name='edit_birch'),    
     # re_path(r'edit/manifestation/(?P<digisig_entity_number>[0-9]{8})', views.edit_manifestation, name='edit_manifestation'),
-    # re_path(r'edit/item/(?P<digisig_entity_number>[0-9]{8})', views.edit_item, name='edit_item'),
+    re_path(r'edit/item/(?P<digisig_entity_number>[0-9]{8})', views.edit_item, name='edit_item'),
     # re_path(r'edit/support/(?P<digisig_entity_number>[0-9]{8})', views.edit_support, name='edit_support'),
     # re_path(r'edit/part/(?P<digisig_entity_number>[0-9]{8})', views.edit_part, name='edit_part'),
 
     # re_path(r'edit/description/(?P<digisig_entity_number>[0-9]{8})', views.edit_description, name='edit_description'),
 
-    # re_path(r'page/item/(?P<digisig_entity_number>[0-9]{8})', views.item_page, name='item_page'),
-    # re_path(r'data/item/(?P<digisig_entity_number>[0-9]{8})', views.data, name='data'),
+    re_path(r'page/item/(?P<digisig_entity_number>[0-9]{8})', views.item_page, name='item_page'),
+    re_path(r'data/item/(?P<digisig_entity_number>[0-9]{8})', views.data, name='data'),
 
     # re_path(r'page/seal/(?P<digisig_entity_number>[0-9]{8})', views.seal_page, name='seal_page'),
     # re_path(r'data/seal/(?P<digisig_entity_number>[0-9]{8})', views.data, name='data'),

@@ -41,8 +41,13 @@ from utils.generaltools import *
 ############# Table of Contents ############
 
 # index and blank
+# about
+# success
+# Ajax
 
 # information
+	# Government
+	# Alderman
 
 # Discover
 
@@ -68,15 +73,22 @@ def home(request):
 	actor_total = Individual.objects.filter(
 		fk_individual_event__fk_event__locationreference__fk_locationname__fk_location__fk_region=87).distinct('id_individual').count()	
 
-	reference_total = Referenceindividual.objects.filter(fk_event__locationreference__fk_locationname__fk_location__fk_region=87).exclude(fk_individual=10000019).count()
+	references = Referenceindividual.objects.filter(fk_event__locationreference__fk_locationname__fk_location__fk_region=87).exclude(fk_individual=10000019)
+	reference_total = references.count()
 
 	event_total = Referenceindividual.objects.filter(fk_event__locationreference__fk_locationname__fk_location__fk_region=87).exclude(fk_individual=10000019).distinct('fk_event').count()
+
+	references_events = references.values("fk_event")
+	eventset = Event.objects.filter(pk_event__in=references_events)
+	record_total = Item.objects.filter(part__fk_event__in=eventset).count()
+
 
 	context = {
 		'pagetitle': pagetitle,
 		'actor_total': actor_total,
 		'reference_total': reference_total,
 		'event_total': event_total,
+		'record_total': record_total
 		}
 
 	return HttpResponse(template.render(context, request))
@@ -223,7 +235,7 @@ def information(request, infotype):
 		context = {
 			'pagetitle': pagetitle,
 			'group_name': group_name,
-			'nodeofficeholderset': nodeofficeholderset, 
+			# 'nodeofficeholderset': nodeofficeholderset, 
 			'branchofficeholderset': branchofficeholderset,
 			# 'officer_report': officer_report,
 			'data1': data1,
@@ -323,7 +335,7 @@ def search(request, searchtype):
 
 	print(searchtype)
 
-### Actor Search
+	############### Actor Search
 
 	if searchtype == "actors":
 
@@ -415,6 +427,50 @@ def search(request, searchtype):
 
 		template = loader.get_template('londonnet/search_actor.html')
 		return HttpResponse(template.render(context, request))
+
+	############# Record Search ##############
+
+	if searchtype == "items":
+
+		pagetitle = 'title'
+
+
+		context = {
+			'pagetitle': pagetitle,
+			# 'actor_object': actor_object,
+			# 'sealindividual': sealindividual,
+			# 'totalrows': totalrows,
+			# 'totaldisplay': totaldisplay,
+			# 'form': form,
+			'pagecountercurrent': pagecountercurrent,
+			'pagecounternext': pagecounternext,
+			'pagecounternextnext': pagecounternextnext,
+			}
+
+		template = loader.get_template('londonnet/search_item.html')
+		return HttpResponse(template.render(context, request))
+
+	############# Event Search ##############
+
+	if searchtype == "events":
+
+		pagetitle = 'title'
+
+		context = {
+			'pagetitle': pagetitle,
+			# 'actor_object': actor_object,
+			# 'sealindividual': sealindividual,
+			# 'totalrows': totalrows,
+			# 'totaldisplay': totaldisplay,
+			# 'form': form,
+			'pagecountercurrent': pagecountercurrent,
+			'pagecounternext': pagecounternext,
+			'pagecounternextnext': pagecounternextnext,
+			}
+
+		template = loader.get_template('londonnet/search_event.html')
+		return HttpResponse(template.render(context, request))
+
 
 
 ############################ Analyze #############################
@@ -511,6 +567,54 @@ def actor_page(request, digisig_entity_number):
 
 	return HttpResponse(template.render(context, request))
 
+
+############## Item (record) ####################
+
+def item_page(request, digisig_entity_number):
+	item_object = get_object_or_404(Item, id_item=digisig_entity_number)
+
+	pagetitle= item_object.shelfmark
+
+
+	template = loader.get_template('londonnet/actor.html')
+	context = {
+		'pagetitle': pagetitle,
+		'item_object': item_object,
+		# 'seal_object': seal_object,
+		# 'sealnumber': sealnumber,
+		# 'reference_object': reference_object,
+		# 'reference_set': reference_set,
+		# 'relationship_object': relationship_object,
+		# 'relationshipnumber' : relationshipnumber,
+		# 'sealdescriptionset': sealdescriptionset,
+		}
+
+	return HttpResponse(template.render(context, request))
+
+
+
+############## Event ####################
+
+def event_page(request, digisig_entity_number):
+	#event_object = get_object_or_404(Event, pk_event=digisig_entity_number)
+
+	pagetitle= "Page Title"
+
+
+	template = loader.get_template('londonnet/event.html')
+	context = {
+		'pagetitle': pagetitle,
+		# 'actor_object': individual_object,
+		# 'seal_object': seal_object,
+		# 'sealnumber': sealnumber,
+		# 'reference_object': reference_object,
+		# 'reference_set': reference_set,
+		# 'relationship_object': relationship_object,
+		# 'relationshipnumber' : relationshipnumber,
+		# 'sealdescriptionset': sealdescriptionset,
+		}
+
+	return HttpResponse(template.render(context, request))
 
 
 ############################# edit operations ##############################
@@ -673,6 +777,23 @@ def edit_actor(request, digisig_entity_number):
 
 	return HttpResponse(template.render(context, request))
 
+
+def edit_item(request, digisig_entity_number):
+	#some temp default data
+	pagetitle = 'title'
+	context = {
+		'pagetitle': pagetitle,
+	}
+	template = loader.get_template('londonnet/index.html')
+
+
+def edit_event(request, digisig_entity_number):
+	#some temp default data
+	pagetitle = 'title'
+	context = {
+		'pagetitle': pagetitle,
+	}
+	template = loader.get_template('londonnet/index.html')
 
 
 ############################# data ##############################

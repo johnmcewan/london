@@ -1,0 +1,360 @@
+{% extends "londonnet/base.html" %}
+
+{% load static %}
+
+{% block content %}
+
+	<div class="search-catalogue-banner"></div>
+ 	<div class="sidepanel-left"></div>
+	<div class="sidepanel-right"></div>
+
+
+	<div class="sidebarleft_edit">
+		<div class="Revisions">
+			<h2>Edit Event</h2>
+			<form id="form" method="post">
+		    	{% csrf_token %}
+				{{ form.non_field_errors }}
+
+				<div class="fieldWrapper">		
+					{{ form.repositories.errors }}
+					<label for="{{ form.repositories.id_for_label }}">Repositories</label>
+					{{ form.repositories }}
+				</div>
+
+				<div class="fieldWrapper">		
+					{{ form.series_all.errors }}
+					<label for="{{ form.series_all.id_for_label }}">Series</label>
+					{{ form.series_all }}
+				</div>
+				<div class="fieldWrapper" >		
+					{{ form.addpart.errors }}
+					<label for="{{ form.addpart.id_for_label }}">addpart</label>
+					{{ form.addpart }}
+				</div>
+				<div class="fieldWrapper" >		
+					{{ form.part_num1.errors }}
+					<label for="{{ form.part_num1.id_for_label }}">part_num1</label>
+					{{ form.part_num1 }}
+				</div>
+				<div class="fieldWrapper" >		
+					{{ form.part_alpha1.errors }}
+					<label for="{{ form.part_alpha1.id_for_label }}">part_alpha1</label>
+					{{ form.part_alpha1 }}
+				</div>
+				<div class="fieldWrapper" >		
+					{{ form.part_num2.errors }}
+					<label for="{{ form.part_num2.id_for_label }}">part_num2</label>
+					{{ form.part_num2 }}
+				</div>
+				<div class="fieldWrapper" >		
+					{{ form.part_alpha2.errors }}
+					<label for="{{ form.part_alpha2.id_for_label }}">part_alpha2</label>
+					{{ form.part_alpha2 }}
+				</div>
+
+<!-- 				<div class="fieldWrapper" >		
+					{{ form.rightsholder.errors }}
+					<label for="{{ form.righstsholder.id_for_label }}">Rights Holder</label>
+					{{ form.rightsholder }}
+				</div>
+				<div class="fieldWrapper">		
+					{{ form.access.errors }}
+					<label for="{{ form.access.id_for_label }}">Access</label>
+					{{ form.access }}
+				</div>
+				<div class="fieldWrapper">		
+					{{ form.representationtype.errors }}
+					<label for="{{ form.representationtype.id_for_label }}">Representation Type</label>
+					{{ form.representationtype }}
+				</div>
+				<div class="fieldWrapper">		
+					{{ form.contributor.errors }}
+					<label for="{{ form.contributor.id_for_label }}">Contributor</label>
+					{{ form.contributor }}
+				</div>
+				<div class="fieldWrapper">		
+					{{ form.dateimage.errors }}
+					<label for="{{ form.dateimage.id_for_label }}">Date of Image</label>
+					{{ form.dateimage }}
+				</div>
+				<div class="fieldWrapper">		
+					{{ form.primacy.errors }}
+					<label for="{{ form.primacy.id_for_label }}">Primacy</label>
+					{{ form.primacy }}
+				</div>
+				<div class="fieldWrapper">		
+					{{ form.image_file_location.errors }}
+					<label for="{{ form.image_file_location.id_for_label }}">File location</label>
+					{{ form.image_file_location }}
+				</div> -->
+				<div class="fieldWrapper">
+			    	<input class="submit" type="submit" value="Submit">
+		    </div>
+		 	</form>
+		</div>
+	</div>
+
+	<div class="sidebarright_edit">
+		<div class="Revisions">
+			<h2>Add Representation</h2>
+			<form id="form" method="post">
+		    	{% csrf_token %}
+				{{ form.non_field_errors }}
+
+				<div class="fieldWrapper">		
+					{{ form.creator.errors }}
+					<label for="{{ form.creator.id_for_label }}">Creator</label>
+					{{ form.creator }}
+				</div>
+				<div class="fieldWrapper">		
+					{{ form.collection.errors }}
+					<label for="{{ form.collection.id_for_label }}">Collection</label>
+					{{ form.collection }}
+				</div>
+				<div class="fieldWrapper" >		
+					{{ form.rightsholder.errors }}
+					<label for="{{ form.righstsholder.id_for_label }}">Rights Holder</label>
+					{{ form.rightsholder }}
+				</div>
+				<div class="fieldWrapper">		
+					{{ form.access.errors }}
+					<label for="{{ form.access.id_for_label }}">Access</label>
+					{{ form.access }}
+				</div>
+				<div class="fieldWrapper">		
+					{{ form.representationtype.errors }}
+					<label for="{{ form.representationtype.id_for_label }}">Representation Type</label>
+					{{ form.representationtype }}
+				</div>
+				<div class="fieldWrapper">		
+					{{ form.contributor.errors }}
+					<label for="{{ form.contributor.id_for_label }}">Contributor</label>
+					{{ form.contributor }}
+				</div>
+				<div class="fieldWrapper">		
+					{{ form.dateimage.errors }}
+					<label for="{{ form.dateimage.id_for_label }}">Date of Image</label>
+					{{ form.dateimage }}
+				</div>
+				<div class="fieldWrapper">		
+					{{ form.primacy.errors }}
+					<label for="{{ form.primacy.id_for_label }}">Primacy</label>
+					{{ form.primacy }}
+				</div>
+				<div class="fieldWrapper">		
+					{{ form.image_file_location.errors }}
+					<label for="{{ form.image_file_location.id_for_label }}">File location</label>
+					{{ form.image_file_location }}
+				</div>
+				<div class="fieldWrapper">
+			    	<input class="submit" type="submit" value="Submit">
+		    </div>
+		 	</form>
+
+		</div>
+	</div>
+
+
+	<div class="main-title">
+		<h1>{{pagetitle}}</h1>
+	</div>
+
+	<div class="mainpage" id="mainpage"></div>
+
+
+	<div class="entity_detail" id="entity_detail">
+		<h3>
+			Event details ({{item_object.id_item}})
+			{% if authenticationstatus == "authenticated" %}
+			<button class="permalink"><a href=><a href="{% url 'edit_item' digisig_entity_number=item_object.id_item %}">Edit</a></button>
+			{% endif %} 
+			<button onclick="toggle('entity-permalink')" class="permalink entity">Permalink</button>
+		</h3>
+		
+		<table>
+			<tr>
+				<th>Event</th>
+				<td>{{event_object.pk_event}}
+			</tr>
+			<tr>
+				<th>Location</th>
+				<td>{{event_object}}</td>
+			</tr>
+			<tr>
+				<th>Reference </th>
+				<td>{{event_object}}</td>
+			</tr>
+			<tr>
+			{% for part in part_object %}			
+				<th>Participants</th>
+				<td><a href="{% url 'edit' digisig_entity_number=part.id_part %}" target="_blank">{{part.id_part}}: 
+				{% if part.part_number1 != null %}
+				{{part.part_number1}}{{part.part_alpha1}}, {{part.part_number2}}{{part.part_alpha2}}
+				{% endif %}
+				</a>(Event {{part.fk_event.pk_event}})
+				</td>
+
+
+			{% endfor %}
+			</tr>
+		</table>
+
+
+
+	</div>
+
+	<div class="entity-permalink" id="entity-permalink">
+		<div class="permalinkinfo" id="permalinkinfo">
+		Permalink
+		<button onclick="toggle('entity-permalink')" class="closebutton">X</button>
+		<form action="#">
+			<label>Copy this URL to link to this page:</label>
+			<input id="input" class="text" name="" value="http://www.digisig.org/entity/{{item_object.id_item}}" type="text" readonly>
+		</form>
+		</div>
+	</div>
+
+<!-- 
+	<div class="entity_detail" id= "entity_detail"> 
+		<table>
+			<tr>
+				<th colspan="2">Item details ({{item.id_item}})</th>
+				<td></td>
+			</tr>
+			<tr>
+				<th>Item</th>
+				<td>ID: {{item.id_item}}, Shelfmark: {{item.shelfmark}}</td>
+			</tr>
+
+			{% for part in part_object %}
+			<tr>
+				<th>Part</th>
+				<td>{{part.id_part}}</td>
+			</tr>
+			{% endfor %}
+			{% for event in event_object %}
+			<tr>
+				<th>ID Event</th>
+				<td>{{event.pk_event}}</td>
+			</tr>
+			{% endfor %}
+			<tr>
+				<th>Support</th>
+				<td>ID: {{support_object.id_support}}, Attachment: {{support_object.fk_attachment}}, Material: {{support_object.fk_material}}, Position: {{support_object.fk_number_currentposition}}</td>
+			</tr>
+		</table>
+	</div> -->
+
+	<div class="entity_representation" id="entity_representation">
+		<div class="div-caption">
+			Representations <button id="entitybutton1" onclick="tbtoggle('entity1', 'entitybutton1')" class="entity">+</button>
+		</div>
+
+		<div>
+			<table id="entity1" style="display:none;">
+			{% for representation in representation_objectset %}
+				{% if forloop.counter|divisibleby:2 %}<tr class="even">{% else %}<tr class="odd">{% endif %}
+				<tr>
+					<th colspan="3"><h4><a class="headingbtn" href="{% url 'entity' representation.id_representation %}">Representation details</a></h4></td>
+				</th>
+
+				{% if forloop.counter|divisibleby:2 %}<tr class="even">{% else %}<tr class="odd">{% endif %}
+					<th class="indent">Type</th>
+					<td>{{representation.fk_representation_type}}</td>
+					<td rowspan="3"> 
+					{% if representation.representation_thumbnail != null %}
+						<figure>
+							<img class="modalimage" id="modalimagebase{{forloop.counter}}" src="{{representation.fk_connection}}{{representation.representation_thumbnail}}" alt="{{representation.id_representation}}" onclick="image({{forloop.counter}})">
+						</figure>
+						<!-- The Modal -->
+						<div id="myModal1" class="modal" style="display: none;">
+						  <span class="close" onclick="modalclose({{forloop.counter}})">&times;</span>
+						  <img class="modal-content" id="modalimg1" src="{{representation.fk_connection}}{{representation.representation_filename}}" alt="{{representation.id_representation}}">
+						  <div class="modal-caption" id="caption1"><a href="{% url 'entity' representation.id_representation %}">{{representation.id_representation}}</a></div>
+						</div>
+					{% endif %}
+					</td>
+				</tr>
+
+				{% if representation.fk_contributor_creator != null %}
+				{% if forloop.counter|divisibleby:2 %}<tr class="even">{% else %}<tr class="odd">{% endif %}
+					<th class="indent">Creator</th>
+					<td>{{representation.fk_contributor_creator}}</td>
+				</tr>
+				{% endif %}
+
+	
+				{% if forloop.counter|divisibleby:2 %}<tr class="even">{% else %}<tr class="odd">{% endif %}
+					<th class="indent">Date Created</th>
+					<td>{{representation.represenation_datecreated}}</td>
+				</tr>
+
+				{% if forloop.counter|divisibleby:2 %}<tr class="even">{% else %}<tr class="odd">{% endif %}
+					<th class="indent">Dimensions</th>
+					<td>{{representation.width}} x {{representation.height}} pixels</td>
+				</tr>
+
+			{% if representation.fk_collection != null %}
+			<tr>
+				<th>Source</th>
+				<td>{{representation.fk_collection}}</td>
+			</tr>
+			{% endif %}
+
+			{% if representation.rightsholder != null %}
+			<tr>
+				<th>Rights Holder</th>
+				<td>{{representation.rightsholder}}</td>
+			</tr>
+			{% endif %}
+
+
+			{% if representation.terms != null %}
+			<tr>
+				<th>Terms</th>
+				<td>{{representation.terms}}</td>
+			</tr>
+			{% endif %}
+
+
+			{% if representation.notes != null %}
+			<tr>
+				<th>Notes</th>
+				<td>{{representation.notes}}</td>
+			</tr>
+			{% endif %}
+
+				{% endfor %}
+
+			</table>
+		</div>
+	</div>
+
+
+
+<script>
+// Get the modal
+var modal = document.getElementById("myModal");
+
+// Get the image and insert it inside the modal - use its "alt" text as a caption
+var img = document.getElementById("modalimagebase");
+var modalImg = document.getElementById("img01");
+var captionText = document.getElementById("caption");
+img.onclick = function(){
+  modal.style.display = "block";
+  modalImg.src = this.src;
+  captionText.innerHTML = this.alt;
+}
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+  modal.style.display = "none";
+} 
+
+</script>
+
+{% endblock %}
