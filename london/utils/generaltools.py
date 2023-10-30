@@ -138,6 +138,7 @@ def referencecollector(reference_object):
 		reference_dic["id_reference"] = ref.pk_referenceindividual
 		reference_dic["date1"] = event.startdate
 		reference_dic["date2"] = event.enddate
+		reference_dic["referencerole"] = ref.fk_referencerole.referencerole
 
 		for item in itemset:
 			reference_dic["shelfmark"] = item.shelfmark
@@ -149,7 +150,6 @@ def referencecollector(reference_object):
 
 		reference_set[ref.pk_referenceindividual] = reference_dic
 
-	print (reference_set)
 	return (reference_set)
 
 def representationmetadata(representation_case):

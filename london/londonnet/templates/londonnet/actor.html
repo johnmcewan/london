@@ -144,10 +144,10 @@
 			
 				{% for r in reference_set.values %}
 			<tr>
-				<td>{{r.shelfmark}}</td>
+				<td><a href="{% url 'entity' digisig_entity_number=r.id_item %}">{{r.shelfmark}}</td>
 				<td>{{r.date1}} - {{r.date2}}</td>
-				<td>{{r.id_item}}</td>
 				<td>{{r.location}}</td>
+				<td>{{referencerole}}</td>
 			</tr>
 				{% endfor %}
 
