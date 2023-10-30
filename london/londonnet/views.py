@@ -80,7 +80,7 @@ def home(request):
 
 	references_events = references.values("fk_event")
 	eventset = Event.objects.filter(pk_event__in=references_events)
-	record_total = Item.objects.filter(part__fk_event__in=eventset).count()
+	record_total = Item.objects.filter(part__fk_event__in=eventset).distinct().count()
 
 
 	context = {
