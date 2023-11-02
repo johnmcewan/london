@@ -30,7 +30,7 @@
 		<table>
 			<tr>
 				<th>Name</th>
-				<td>{{individual_info.fullname_original}} {{individual_info.id_individual }}</td>
+				<td><a href="{% url 'entity' digisig_entity_number=individual_info.id_individual %}">{{individual_info.fullname_original}}</a></td>
 			</tr>
 			<tr>
 				<th>Total References</th>

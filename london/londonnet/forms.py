@@ -208,25 +208,25 @@ class PeopleForm(forms.Form):
 class PageCycleForm(forms.Form):
 	pagination = forms.IntegerField(initial=1, widget=forms.HiddenInput)
 
-# Form for item search
+#Form for item search
 
-# #Nb: a search seal form uses a limited number of series and repositories -- but need all for this form
-# series_all_options = [('', 'None')]
-# repositories_all_options = [('', 'None')]
+#Nb: a search seal form uses a limited number of series and repositories -- but need all for this form
+series_all_options = [('', 'None')]
+repositories_all_options = [('', 'None')]
 
-# for e in Series.objects.order_by('fk_repository'):
-# 	repository = e.fk_repository
-# 	appendvalue = repository.repository + " : " + e.series_name
-# 	series_all_options.append((e.pk_series, appendvalue))
+for e in Series.objects.order_by('fk_repository'):
+	repository = e.fk_repository
+	appendvalue = repository.repository + " : " + e.series_name
+	series_all_options.append((e.pk_series, appendvalue))
 
-# for e in Repository.objects.order_by('repository_fulltitle'):
-# 	repositories_options.append((e.fk_repository, e.repository_fulltitle))
+for e in Repository.objects.order_by('repository_fulltitle'):
+	repositories_all_options.append((e.pk_repository, e.repository_fulltitle))
 
-# class ItemForm(forms.Form):
-# 	series_all = forms.ChoiceField(label='series', choices=series_all_options, required=False, initial={'': 'None'})
-# 	repositories = forms.ChoiceField(label='repositories', choices=repositories_options, required=False, initial={'': 'None'})
-# 	shelfmark = forms.CharField(label='shelfmark', max_length=100, required=False, widget=forms.TextInput(attrs={'placeholder': 'Example: 867'}))
-# 	pagination = forms.IntegerField(initial=1, widget=forms.HiddenInput)
+class ItemForm(forms.Form):
+	series_all = forms.ChoiceField(label='series', choices=series_all_options, required=False, initial={'': 'None'})
+	repositories = forms.ChoiceField(label='repositories', choices=repositories_all_options, required=False, initial={'': 'None'})
+	shelfmark = forms.CharField(label='shelfmark', max_length=50, required=False, widget=forms.TextInput(attrs={'placeholder': 'Example: 867'}))
+	pagination = forms.IntegerField(initial=1, widget=forms.HiddenInput)
 
 # ######################## Edit forms ########################
 

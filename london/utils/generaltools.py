@@ -33,6 +33,30 @@ from rdflib.namespace import FOAF, XSD
 # addseal
 
 
+# Pagination
+# def pagination(qpagination, search_object):
+# 	qpaginationend = int(qpagination) * 10
+# 	qpaginationstart = int(qpaginationend) -9 
+# 	totalrows = len(search_object)
+
+# 	# if the dataset is less than the page limit
+# 	if qpaginationend > totalrows:
+# 		qpaginationend = totalrows
+
+# 	if totalrows > 1:
+# 		if qpaginationend < 10:
+# 			print(totalrows)
+# 		else:
+# 			search_object = search_object[qpaginationstart:qpaginationend]
+
+# 	totaldisplay = str(qpaginationstart) + " - " + str(qpaginationend)
+
+# 	pagecountercurrent = qpagination
+# 	pagecounternext = int(qpagination)+1
+# 	pagecounternextnext = int(qpagination)+2
+
+# 	return (pagecountercurrent, pagecounternext, pagecounternextnext, totaldisplay, totalrows, search_object)	
+
 # Office holders
 def officeholders(individual):
 	## List of office holders -- find nodes then branches		

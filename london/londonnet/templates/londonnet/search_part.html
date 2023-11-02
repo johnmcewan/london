@@ -9,7 +9,7 @@
 	<div class="sidepanel-right"></div>
 
 	<div class="main-title">
-		<h1>Search Actors</h1>
+		<h1>Search Records</h1>
 	</div>
 
 <div class="mainpage"></div>
@@ -34,7 +34,7 @@
 		<div class="searchfilter">		
 			<div class="filter">
 			<h2>Filter</h2>
-			<form id="form" action="/search/actors" method="post">
+			<form id="form" action="/search/records" method="post">
 		    	{% csrf_token %}
 				{{ form.non_field_errors }}
 				<div style="display: none" class="fieldWrapper">
@@ -42,27 +42,21 @@
 					<label for="{{ form.pagination.id_for_label }}">pagination</label>
 					{{ form.pagination}}
 				</div>
+				<div class="fieldWrapper" >		
+					{{ form.repositories.errors }}
+					<label for="{{ form.repositories.id_for_label }}">Archives</label>
+					{{ form.repositories }}
+				</div>
 				<div class="fieldWrapper">		
-					{{ form.name.errors }}
-					<label for="{{ form.name.id_for_label }}">Name <a class="help" href="{% url 'entity' digisig_entity_number=10001587 %}" target="_blank"><i class="fas fa-question-circle"></i></a></label>
-					{{ form.name }}
+					{{ form.series_all.errors }}
+					<label for="{{ form.series_all.id_for_label }}">Series</label>
+					{{ form.series_all }}
 				</div>
 				<div class="fieldWrapper" >		
-					{{ form.group.errors }}
-					<label for="{{ form.group.id_for_label }}">Actor Type</label>
-					{{ form.group }}
+					{{ form.shelfmark.errors }}
+					<label for="{{ form.shelfmark.id_for_label }}">Reference</label>
+					{{ form.shelfmark }}
 				</div>
-				<div class="fieldWrapper">		
-					{{ form.personclass.errors }}
-					<label for="{{ form.personclass.id_for_label }}">Corporate Actor Class</label>
-					{{ form.personclass }}
-				</div>
-				<div class="fieldWrapper">		
-					{{ form.personorder.errors }}
-					<label for="{{ form.personorder.id_for_label }}">Corporate Actor Order</label>
-					{{ form.personorder }}
-				</div>
-
 
 				<div class="fieldWrapper">
 			    	<input class="submit" type="submit" value="Submit">
@@ -76,21 +70,9 @@
 	
 
 		<div class="searchresults">
-		{% for individual in actor_object %}
-			<div>
-					{% if individual.id_individual != 10000019 %}<a href="{% url 'entity' digisig_entity_number=individual.id_individual %}">{% endif %}
-						{% if individual.group_name != null %}{{individual.group_name}}{% endif %}
-						{% if individual.groupclass != null %} ({{individual.groupclass}}){% endif %}
-						{% if individual.grouporder != null %}: {{individual.grouporder}}{% endif %}
-						{% if individual.fk_descriptor_title != null %}{{individual.fk_descriptor_title}}{% endif %}
-						{% if individual.fk_descriptor_name != null %}{{individual.fk_descriptor_name}}{% endif %}
-						{% if individual.fk_descriptor_prefix1 != null %}{{individual.fk_descriptor_prefix1}}{% endif %}
-						{% if individual.fk_descriptor_descriptor1 != null %}{{individual.fk_descriptor_descriptor1}}{% endif %}
-						{% if individual.fk_descriptor_prefix2 != null %}{{individual.fk_descriptor_prefix2}}{% endif %}
-						{% if individual.fk_descriptor_descriptor2 != null %}{{individual.fk_descriptor_descriptor2}}{% endif %}
-						{% if individual.fk_descriptor_prefix3 != null %}{{individual.fk_descriptor_prefix3}}{% endif %}
-						{% if individual.fk_descriptor_descriptor3 != null %}{{individual.fk_descriptor_descriptor3}}{% endif %}
-					{% if person_object.id_individual != 10000019 %}</a>{% endif %}
+		{% for part in part_object %}
+		<div>
+			{{part.reference_full}}
 		</div>
 		<div></div>
 		{% endfor %}

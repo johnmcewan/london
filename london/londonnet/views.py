@@ -214,7 +214,7 @@ def information(request, infotype):
 
 			yearreport[y] = report
 
-		print ("here is the report", yearreport)
+		# print ("here is the report", yearreport)
 
 		# officer_report = []
 
@@ -383,24 +383,30 @@ def search(request, searchtype):
 
 
 	# preparing the data for individual_object
-		qpaginationend = int(qpagination) * 10
-		qpaginationstart = int(qpaginationend) -9 
-		totalrows = len(actor_object)
+		# pagecountercurrent, pagecounternext, pagecounternextnext, totaldisplay, actor_object= pagination(qpagination, actor_object)
 
-		# if the dataset is less than the page limit
-		if qpaginationend > totalrows:
-			qpaginationend = totalrows
+		pagecountercurrent, pagecounternext, pagecounternextnext, totaldisplay, totalrows, actor_object = paginator(qpagination, actor_object)
 
-		if totalrows > 1:
-			if qpaginationend < 10:
-				print(totalrows)
-			else:
-				actor_object = actor_object[qpaginationstart:qpaginationend]
-		totaldisplay = str(qpaginationstart) + " - " + str(qpaginationend)
 
-		pagecountercurrent = qpagination
-		pagecounternext = int(qpagination)+1
-		pagecounternextnext = int(qpagination)+2
+		# qpaginationend = int(qpagination) * 10
+		# qpaginationstart = int(qpaginationend) -9 
+		# totalrows = len(actor_object)
+
+		# # if the dataset is less than the page limit
+		# if qpaginationend > totalrows:
+		# 	qpaginationend = totalrows
+
+		# if totalrows > 1:
+		# 	if qpaginationend < 10:
+		# 		print(totalrows)
+		# 	else:
+		# 		actor_object = actor_object[qpaginationstart:qpaginationend]
+		# totaldisplay = str(qpaginationstart) + " - " + str(qpaginationend)
+
+		# pagecountercurrent = qpagination
+		# pagecounternext = int(qpagination)+1
+		# pagecounternextnext = int(qpagination)+2
+
 
 	# this code prepares the list of links to associated seals for each individual
 		sealindividual = []
@@ -430,25 +436,61 @@ def search(request, searchtype):
 
 	############# Record Search ##############
 
-	if searchtype == "items":
+	if searchtype == "records":
 
 		pagetitle = 'title'
+		# item_object = Item.objects.all().order_by('fk_repository', 'fk_series')
 
+		part_object = Part.objects.filter(
+		fk_event__locationreference__fk_locationname__fk_location__fk_region=87).order_by("fk_item__fk_repository", "fk_item__fk_series")
+
+		# .order_by('fk_repository', 'fk_series')
+
+		if request.method == "POST":
+			form = ItemForm(request.POST)
+			if form.is_valid():
+				qrepository = form.cleaned_data['repositories']	
+				qseries = form.cleaned_data['series_all']
+				qshelfmark = form.cleaned_data['shelfmark']
+				qpagination = form.cleaned_data['pagination']
+
+				if qrepository.isdigit():
+					if int(qrepository) > 0:
+						part_object = part_object.filter(
+							fk_item__fk_repository=qrepository)
+
+				if qseries.isdigit():
+					if int(qseries) > 0:
+						part_object = part_object.filter(
+							fk_item__fk_series=qseries)
+
+				if len(qshelfmark) > 0:
+				 	part_object = part_object.filter(
+				 		fk_item__shelfmark__icontains=qshelfmark)
+
+		else:
+			form = ItemForm()
+			qpagination = 1
+
+		# part_object = part_object[:10]
+
+		pagecountercurrent, pagecounternext, pagecounternextnext, totaldisplay, totalrows, part_object = paginator(qpagination, part_object)
 
 		context = {
 			'pagetitle': pagetitle,
-			# 'actor_object': actor_object,
-			# 'sealindividual': sealindividual,
-			# 'totalrows': totalrows,
-			# 'totaldisplay': totaldisplay,
-			# 'form': form,
+			'part_object': part_object,
+			'totalrows': totalrows,
+			'totaldisplay': totaldisplay,
+			'form': form,
 			'pagecountercurrent': pagecountercurrent,
 			'pagecounternext': pagecounternext,
 			'pagecounternextnext': pagecounternextnext,
 			}
 
-		template = loader.get_template('londonnet/search_item.html')
+		template = loader.get_template('londonnet/search_part.html')
 		return HttpResponse(template.render(context, request))
+
+
 
 	############# Event Search ##############
 

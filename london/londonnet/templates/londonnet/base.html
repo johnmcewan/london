@@ -123,6 +123,8 @@
       <button class="subnavbtn">Search <i class="fas fa-caret-down"></i></button>
       <div class="subnav-content">
           <a href="{% url 'search' searchtype='actors' %}">Actors</a>
+          <a href="{% url 'search' searchtype='events' %}">Events</a>
+          <a href="{% url 'search' searchtype='records' %}">Records</a>
       </div>
     </div> 
     <div class="subnav">
@@ -155,7 +157,7 @@
     </div>
 
 
-  <div class="bannertext"><h1>Witnesing London</h1><i>Mapping the Social and Political Networks of Medieval London</i></div>
+  <div class="bannertext"><h1>Witnessing London</h1><i>Mapping the Social and Political Networks of Medieval London</i></div>
 
 	{% block content %}
 	{% endblock %}
