@@ -214,19 +214,38 @@ class PageCycleForm(forms.Form):
 series_all_options = [('', 'None')]
 repositories_all_options = [('', 'None')]
 
-for e in Series.objects.order_by('fk_repository'):
+# part_object = Item.objects.filter(
+# 		fk_item__fk_event__locationreference__fk_locationname__fk_location__fk_region=87).order_by(
+# 		"fk_item__fk_repository", "fk_item__fk_series")
+
+#https://docs.djangoproject.com/en/4.2/ref/models/expressions/
+#Comment.objects.filter(post__in=Subquery(posts.values("pk")))
+
+#Filtering for just the London documents
+itemset = Item.objects.filter(
+	part__fk_event__locationreference__fk_locationname__fk_location__fk_region=87).values("fk_series")
+
+series_set = Series.objects.filter(pk_series__in=itemset).order_by("fk_repository")
+for e in series_set:
 	repository = e.fk_repository
 	appendvalue = repository.repository + " : " + e.series_name
 	series_all_options.append((e.pk_series, appendvalue))
+	# repositories_all_options.append((repository.pk_repository, repository.repository_fulltitle))
 
-for e in Repository.objects.order_by('repository_fulltitle'):
-	repositories_all_options.append((e.pk_repository, e.repository_fulltitle))
+repository_set = series_set.distinct("fk_repository__repository").order_by("fk_repository__repository")
+
+for e in repository_set:
+#for e in Repository.objects.order_by('repository_fulltitle'):
+	repository = e.fk_repository
+	repositories_all_options.append((repository.pk_repository, repository.repository_fulltitle))
 
 class ItemForm(forms.Form):
 	series_all = forms.ChoiceField(label='series', choices=series_all_options, required=False, initial={'': 'None'})
 	repositories = forms.ChoiceField(label='repositories', choices=repositories_all_options, required=False, initial={'': 'None'})
 	shelfmark = forms.CharField(label='shelfmark', max_length=50, required=False, widget=forms.TextInput(attrs={'placeholder': 'Example: 867'}))
 	pagination = forms.IntegerField(initial=1, widget=forms.HiddenInput)
+
+
 
 # ######################## Edit forms ########################
 

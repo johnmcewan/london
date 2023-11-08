@@ -439,12 +439,8 @@ def search(request, searchtype):
 	if searchtype == "records":
 
 		pagetitle = 'title'
-		# item_object = Item.objects.all().order_by('fk_repository', 'fk_series')
-
 		part_object = Part.objects.filter(
 		fk_event__locationreference__fk_locationname__fk_location__fk_region=87).order_by("fk_item__fk_repository", "fk_item__fk_series")
-
-		# .order_by('fk_repository', 'fk_series')
 
 		if request.method == "POST":
 			form = ItemForm(request.POST)
@@ -472,8 +468,6 @@ def search(request, searchtype):
 			form = ItemForm()
 			qpagination = 1
 
-		# part_object = part_object[:10]
-
 		pagecountercurrent, pagecounternext, pagecounternextnext, totaldisplay, totalrows, part_object = paginator(qpagination, part_object)
 
 		context = {
@@ -489,7 +483,6 @@ def search(request, searchtype):
 
 		template = loader.get_template('londonnet/search_part.html')
 		return HttpResponse(template.render(context, request))
-
 
 
 	############# Event Search ##############
@@ -610,7 +603,7 @@ def actor_page(request, digisig_entity_number):
 	return HttpResponse(template.render(context, request))
 
 
-############## Item (record) ####################
+############## Item ####################
 
 def item_page(request, digisig_entity_number):
 	item_object = get_object_or_404(Item, id_item=digisig_entity_number)
@@ -618,7 +611,7 @@ def item_page(request, digisig_entity_number):
 	pagetitle= item_object.shelfmark
 
 
-	template = loader.get_template('londonnet/actor.html')
+	template = loader.get_template('londonnet/item.html')
 	context = {
 		'pagetitle': pagetitle,
 		'item_object': item_object,
@@ -633,6 +626,32 @@ def item_page(request, digisig_entity_number):
 
 	return HttpResponse(template.render(context, request))
 
+############## Part (record) ####################
+
+def part_page(request, digisig_entity_number):
+	part_object = get_object_or_404(Part, id_part=digisig_entity_number)
+
+	reference_set = Referenceindividual.objects.filter(fk_event=part_object.fk_event).exclude(fk_individual=10000019)
+	manifestation_set = Manifestation.objects.filter(fk_support__fk_part=part_object)
+
+	pagetitle= part_object.reference_full
+	template = loader.get_template('londonnet/part.html')
+
+	context = {
+		'pagetitle': pagetitle,
+		'part_object': part_object,
+		'reference_set': reference_set,
+		'manifestation_set': manifestation_set,
+		# 'seal_object': seal_object,
+		# 'sealnumber': sealnumber,
+		# 'reference_object': reference_object,
+		# 'reference_set': reference_set,
+		# 'relationship_object': relationship_object,
+		# 'relationshipnumber' : relationshipnumber,
+		# 'sealdescriptionset': sealdescriptionset,
+		}
+
+	return HttpResponse(template.render(context, request))
 
 
 ############## Event ####################

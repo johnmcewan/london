@@ -72,7 +72,7 @@
 		<div class="searchresults">
 		{% for part in part_object %}
 		<div>
-			{{part.reference_full}}
+			<a href="{% url 'entity' digisig_entity_number=part.id_part %}">{{part.reference_full}}</a>
 		</div>
 		<div></div>
 		{% endfor %}

@@ -1294,7 +1294,7 @@ def redirectgenerator(digisig_entity_number, operation):
 		elif (entitynumber < 49999997): stem = "collection/"
 		else: stem = "place/" 
 
-	if finalcharacter == '8': stem = "part/"
+	if finalcharacter == '8': stem = "record/"
 	if finalcharacter == '9': stem = "actor/"
 
 	targetphrase = root + stem + str(digisig_entity_number)
