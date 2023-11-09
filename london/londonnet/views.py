@@ -498,9 +498,9 @@ def search(request, searchtype):
 			# 'totalrows': totalrows,
 			# 'totaldisplay': totaldisplay,
 			# 'form': form,
-			'pagecountercurrent': pagecountercurrent,
-			'pagecounternext': pagecounternext,
-			'pagecounternextnext': pagecounternextnext,
+			# 'pagecountercurrent': pagecountercurrent,
+			# 'pagecounternext': pagecounternext,
+			# 'pagecounternextnext': pagecounternextnext,
 			}
 
 		template = loader.get_template('londonnet/search_event.html')
